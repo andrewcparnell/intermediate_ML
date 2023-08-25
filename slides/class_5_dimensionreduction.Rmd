@@ -1,0 +1,405 @@
+---
+title: 'Class 5: Unsupervised learning and dimension reduction'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
+  \newline \vspace{1cm}
+  \newline https://andrewcparnell.github.io/intermediate_ML
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+classoption: "aspectratio=169"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+library(tidyverse)
+```
+
+## Learning outcomes
+
+Our first foray into __unsupervised learning__
+
+- Reminder on some basic methods of dimension reduction
+- An introduction to autoencoders and how they are used
+- Some examples to show how they are used
+
+## Set-up
+
+- Suppose we have a high dimensional data set that we can write as a matrix $X$ with $n$ rows and $p$ columns
+- For example you might have a set of songs in the rows and details about them in the columns (number of streams, length, chord structure, etc)
+- Plotting all of these data gets really hard as it's so high dimensional
+- Can we extract some kind of meaning from the variability in these data? Are some columns linked? Are some of the row very different from the others
+- Idea: approximate the matrix $X$ with $\tilde{X}$ which has far fewer columns but contains most of the information in X
+
+## Principal Components Analysis
+
+- The oldest, simplest and most useful version of dimension reduction
+- The method plots the data in high-dimensional space (mathematically) and then re-aligns the axes to match the spread of the data, so that the first axis has most of the variability, the second axes the second most, etc
+
+\centering\includegraphics[width=0.4\textwidth]{pca_pic.png}
+
+\let\thefootnote\relax\footnotetext{\tiny From https://en.wikipedia.org/wiki/Principal\_component\_analysis}
+
+## Example: the mnist data
+
+```{r, echo = FALSE}
+library(keras)
+library(keras) # Just for the data set
+library(stats)
+library(ggplot2)
+
+# Load Data
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+x_test <- mnist$test$x
+
+# Preprocess Data
+x_train <- array_reshape(x_train / 255, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test / 255, c(nrow(x_test), 784))
+
+# Plot the First Few Training Images
+par(mfrow = c(2, 2))
+for (i in 1:4) {
+  img <- matrix(x_train[i,], nrow = 28)
+  image(img[,ncol(img):1], axes = FALSE, main = paste("Label:", mnist$train$y[i]))
+}
+```
+
+## Running PCA with 2 dimensions
+
+```{r, echo = FALSE}
+# Remove columns with zero variance
+which_train_bad <- which(apply(x_train, 2, 'sd') == 0)
+which_test_bad <- which(apply(x_test, 2, 'sd') == 0)
+which_bad <- unique(c(which_train_bad, which_test_bad))
+x_train <- x_train[, -which_bad]
+x_test <- x_test[, -which_bad]
+
+# Perform Principal Components Analysis
+pca <- prcomp(x_train, center = TRUE, scale. = TRUE)
+
+# Project Data onto First Two Principal Components
+projected_x_test <- predict(pca, newdata = x_test)[,1:2]
+
+# Create a Data Frame for Plotting
+projected_df <- as.data.frame(projected_x_test)
+projected_df$digit <- as.factor(mnist$test$y)
+
+# Plot Encoded Space Using ggplot2
+ggplot(projected_df, aes(x = PC1, y = PC2, color = digit)) +
+  geom_point() +
+  scale_color_discrete(name = "Digit") +
+  labs(title = "2D Visualization of Encoded Space Using PCA",
+       x = "Principal Component 1",
+       y = "Principal Component 2")
+```
+
+## Some notes on the previous slide
+
+- The PCA never saw the digit number, it only saw the images (I used the digit numbers just for the final plot)
+- I chose (and it's very common to choose) 2 principal component to plot, but you could choose many more
+- The algorithm automatically orders the PCs and you can see how much variation each one captured in the data
+```{r}
+summary(pca)$importance[,1:5] * 100
+```
+- The command to run the PCA is really simple:
+```{r, eval = FALSE}
+pca <- prcomp(x_train, center = TRUE, scale. = TRUE)
+```
+
+## Using PCA values as classifiers
+
+- The first principal component is pretty good at classifying some of the digits (especially zero and one):
+
+```{r}
+boxplot(projected_df$PC1 ~ projected_df$digit, 
+        ylab = "PC1", xlab = "Digit")
+```
+
+## A different way of doing dimension reduction - autoencoders
+
+- A very strange idea: why not fit a standard neural network model but have the features and the target to be the same!?
+- How can this work? Rather than adding lots of extra weights in large hidden layers inside the model reduce the number of weights down to something much smaller
+- Use those reduced weights as the dimension reduced version of the full data
+
+## Structure of an Autoencoder
+
+- An autoencoder consists of an encoder, a code layer, and a decoder
+- The encoder compresses the input into a latent-space representation
+- The decoder reconstructs the input data from the latent space
+
+\centering\includegraphics[width=0.5\textwidth]{autoencoder_pic.png}
+
+\let\thefootnote\relax\footnotetext{\tiny From https://www.compthree.com/blog/autoencoder/}
+
+
+## Training an Autoencoder
+
+- Because the model is really just a neural network, just like all the others we have fitted, we can use `keras`
+- We structure it slightly differently because we want access to the latent space in the middle of the model
+- Once fitted, we access the latent space in the middle and plot, or use it for whatever purpose we have
+
+## Encoding Layer in R
+
+- The encoding layer reduces the dimensionality of the input data
+- We require an activation function, but we're not restricted to just one layer, we can use more if we want:
+
+```{r, eval = FALSE}
+autoencoder %>% 
+  layer_dense(units = 64, activation = 'relu', 
+              input_shape = 784)
+```
+
+## Code Layer in R
+
+- The code layer represents the compressed form of the input
+- We use fewer units depending on how big a set of 'components' we want
+
+```{r, eval = FALSE}
+autoencoder %>% 
+  layer_dense(units = 32, activation = 'relu')
+```
+
+## Decoding Layer in R
+
+- The decoding layer tries to reconstruct the original data from the code layer
+- It usually mirrors the structure of the encoding layer
+
+```{r, eval = FALSE}
+autoencoder %>% 
+  layer_dense(units = 64, activation = 'relu') %>%
+  layer_dense(units = 784, activation = 'sigmoid')
+```
+
+## Running the model
+
+- We then compile and fit the model the same as always
+- But then we extract the weights of that middle layer and predict (a forward pass) those values for each of the observations (in the training or the test set)
+- We can then plot them and see how the values change across the observations
+
+## Example plot
+
+```{r, include = FALSE, results = 'hide', message=FALSE}
+# Load Libraries
+library(keras)
+library(ggplot2)
+set.seed(123)
+
+# Load Data
+mnist <- dataset_mnist()
+x_train <- mnist$train$x
+x_test <- mnist$test$x
+
+# Preprocess Data
+x_train <- array_reshape(x_train / 255, c(nrow(x_train), 784))
+x_test <- array_reshape(x_test / 255, c(nrow(x_test), 784))
+
+# Define Autoencoder Model
+encoding_dim <- 32
+input_img <- layer_input(shape = c(784))
+
+encoded <- input_img %>%
+  layer_dense(units = encoding_dim, activation = 'relu')
+
+decoded <- encoded %>%
+  layer_dense(units = 784, activation = 'sigmoid')
+
+autoencoder <- keras_model(inputs = input_img, outputs = decoded)
+
+# Compile and Fit the Model
+autoencoder %>% compile(
+  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01),
+  #optimizer = 'adam',
+  loss = 'binary_crossentropy'
+)
+
+autoencoder %>% fit(
+  x_train, x_train,
+  epochs = 10,
+  batch_size = 256,
+  validation_data = list(x_test, x_test)
+)
+
+# Create Encoder Model
+encoder <- keras_model(inputs = autoencoder$input, 
+                       outputs = encoded)
+encoded_imgs <- predict(encoder, x_test)
+
+# Plot Encoded Space
+col_sds <- apply(encoded_imgs, 2, 'sd')
+o <- order(col_sds, decreasing = TRUE)
+encoded_df <- as.data.frame(encoded_imgs[,o[1:2]])
+encoded_df$digit <- mnist$test$y
+```
+
+```{r, echo = FALSE}
+ggplot(encoded_df, aes(x = V1, y = V2, color = as.factor(digit))) +
+  geom_point() +
+  scale_color_discrete(name = "Digit") +
+  labs(title = "2D Visualization of Encoded Space",
+       x = paste("Dimension",o[1]),
+       y = paste("Dimension",o[2]))
+```
+
+## What do use an encoder for?
+
+- You can use it to store a much smaller version of your data that contains most of the information
+- You can use it to find observations that lie on the edge of the space and so might be considered anomalies
+- If you find that some dimensions are capturing certain components of the data you can remove them (e.g. de-noising images)
+- You could re-use the lower dimensional set as the features in another model which might be more efficient
+- It can also be used to generate new data
+
+## Variational autoencoders
+
+- A cool extension of autoencoders are __variational encoders__ (VAEs)
+- VAEs extend AEs by introducing a probabilistic framework, where the encoder models the input data as a probability distribution in the latent space
+- Usually a normal distribution is used with an estimated mean and variance matrix
+- The fitting and the code gets a bit more complicated
+- But the cool thing is that you can then use them to __generate__ new training data
+
+## Using VAEs to generate new images
+
+```{r, include = FALSE, results = 'hide', message=FALSE}
+# From https://github.com/rstudio/keras/blob/main/vignettes/examples/variational_autoencoder.R
+
+#' This script demonstrates how to build a variational autoencoder with Keras.
+#' Reference: "Auto-Encoding Variational Bayes" https://arxiv.org/abs/1312.6114
+
+# Note: This code reflects pre-TF2 idioms.
+# For an example of a TF2-style modularized VAE, see e.g.: https://github.com/rstudio/keras/blob/master/vignettes/examples/eager_cvae.R
+# Also cf. the tfprobability-style of coding VAEs: https://rstudio.github.io/tfprobability/
+
+# With TF-2, you can still run this code due to the following line:
+if (tensorflow::tf$executing_eagerly())
+  tensorflow::tf$compat$v1$disable_eager_execution()
+
+library(keras)
+K <- keras::backend()
+
+# Parameters --------------------------------------------------------------
+
+batch_size <- 100L
+original_dim <- 784L
+latent_dim <- 2L
+intermediate_dim <- 256L
+epochs <- 20L
+epsilon_std <- 1.0
+
+# Model definition --------------------------------------------------------
+
+x <- layer_input(shape = c(original_dim))
+h <- layer_dense(x, intermediate_dim, activation = "relu")
+z_mean <- layer_dense(h, latent_dim)
+z_log_var <- layer_dense(h, latent_dim)
+
+sampling <- function(arg){
+  z_mean <- arg[, 1:(latent_dim)]
+  z_log_var <- arg[, (latent_dim + 1):(2 * latent_dim)]
+  
+  epsilon <- k_random_normal(
+    shape = c(k_shape(z_mean)[[1]]), 
+    mean=0.,
+    stddev=epsilon_std
+  )
+  
+  z_mean + k_exp(z_log_var/2)*epsilon
+}
+
+# note that "output_shape" isn't necessary with the TensorFlow backend
+z <- layer_concatenate(list(z_mean, z_log_var)) %>% 
+  layer_lambda(sampling)
+
+# we instantiate these layers separately so as to reuse them later
+decoder_h <- layer_dense(units = intermediate_dim, activation = "relu")
+decoder_mean <- layer_dense(units = original_dim, activation = "sigmoid")
+h_decoded <- decoder_h(z)
+x_decoded_mean <- decoder_mean(h_decoded)
+
+# end-to-end autoencoder
+vae <- keras_model(x, x_decoded_mean)
+
+# encoder, from inputs to latent space
+encoder <- keras_model(x, z_mean)
+
+# generator, from latent space to reconstructed inputs
+decoder_input <- layer_input(shape = latent_dim)
+h_decoded_2 <- decoder_h(decoder_input)
+x_decoded_mean_2 <- decoder_mean(h_decoded_2)
+generator <- keras_model(decoder_input, x_decoded_mean_2)
+
+vae_loss <- function(x, x_decoded_mean){
+  xent_loss <- (original_dim/1.0)*loss_binary_crossentropy(x, x_decoded_mean)
+  kl_loss <- -0.5*k_mean(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1L)
+  xent_loss + kl_loss
+}
+
+vae %>% compile(optimizer = "rmsprop", loss = vae_loss)
+
+# Data preparation --------------------------------------------------------
+
+mnist <- dataset_mnist()
+x_train <- mnist$train$x/255
+x_test <- mnist$test$x/255
+x_train <- array_reshape(x_train, c(nrow(x_train), 784), order = "F")
+x_test <- array_reshape(x_test, c(nrow(x_test), 784), order = "F")
+
+# Model training ----------------------------------------------------------
+
+vae %>% fit(
+  x_train, x_train, 
+  shuffle = TRUE, 
+  epochs = epochs, 
+  batch_size = batch_size, 
+  validation_data = list(x_test, x_test)
+)
+ 
+# Visualizations ----------------------------------------------------------
+
+library(ggplot2)
+library(dplyr)
+x_test_encoded <- predict(encoder, x_test, batch_size = batch_size)
+
+x_test_encoded %>%
+  as_data_frame() %>% 
+  mutate(class = as.factor(mnist$test$y)) %>%
+  ggplot(aes(x = V1, y = V2, colour = class)) + geom_point()
+
+# display a 2D manifold of the digits
+n <- 15  # figure with 15x15 digits
+digit_size <- 28
+
+# we will sample n points within [-4, 4] standard deviations
+grid_x <- seq(-4, 4, length.out = n)
+grid_y <- seq(-4, 4, length.out = n)
+
+rows <- NULL
+for(i in 1:length(grid_x)){
+  column <- NULL
+  for(j in 1:length(grid_y)){
+    z_sample <- matrix(c(grid_x[i], grid_y[j]), ncol = 2)
+    column <- rbind(column, predict(generator, z_sample) %>% matrix(ncol = 28) )
+  }
+  rows <- cbind(rows, column)
+}
+```
+```{r, echo = FALSE, fig.align='center'}
+rows %>% as.raster() %>% plot()
+```
+
+## PCA vs AE vs VAE
+
+- PCA is fast but might not capture complex structures as effectively
+- Autoencoders are more flexible and can capture non-linear relationships
+- Variational AEs are richer again and allow for the generation of new data
+- All methods are available in R for dimension reduction
+
+## Summary
+
+- Dimension reduction very useful for all sorts of reasons, but especially if you have a lack of labelled data for supervised learning
+- Pick a method that works for your data; I would always start with PCA
+- We can use some of these methods later on for anomaly detection

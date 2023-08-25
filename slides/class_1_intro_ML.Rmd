@@ -1,0 +1,303 @@
+---
+title: 'Class 1: Revision on some basics of machine learning'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
+  \newline \vspace{1cm}
+  \newline https://andrewcparnell.github.io/intermediate_ML
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+classoption: "aspectratio=169"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+library(tidyverse)
+```
+
+## Let's get started
+
+- Introduction from Oliver Hooker, PR Statistics
+- Tell me:
+    
+    - who you are, 
+    - where you are from,
+    - your previous experience in working with R and machine learning,
+    - what you are working on,
+    - what you want to get out of the course,
+
+- Timetable for the week
+- Pre-requisites
+
+## How this course works
+
+- This course lives on GitHub, which means anyone can see the slides, code, etc, and make comments on it
+- The timetable document (`index.html`) provides links to all the pdf slides and practicals
+- The slides and the practicals are all written in `Rmarkdown` format, which means you can load them up in Rstudio and see how everything was created
+- Let me know if you spot mistakes, as these can be easily updated on the GitHub page
+- There is an `intermediate_ML.Rproj` R project file from which you should be able to run all the code
+
+## Copyright statement
+
+All the non-GitHub materials provided in the Intermediate to advanced machine learning in R course are copyright of Andrew Parnell.
+
+This means:
+
+- As a user (the student) you have permission (licence) to access the materials to aid and
+support your individual studies.
+- You are not permitted to copy or distribute any materials without the relevant permission
+- We may reserve the right to remove a user in the event of any possible infringement
+
+## Course format and other details
+
+- Lectures and guided coding classes will take place in the morning via Zoom, practical classes in the afternoon
+- In the practical classes I will go round the room asking people how they are getting on
+- If you want to send me a private message use Slack
+- Please ask lots of questions, but __MUTE YOUR MICROPHONE__ when not asking them
+
+## Reminder: machine learning
+
+Machine Learning (ML) / Artificial Intelligence (AI) involves the use of algorithms and statistical models to allow computers to perform a task without explicit instructions.
+
+The main goal is not to teach the computer the rules of what to do but to give it many examples of what you want and let it figure out the rules. 
+
+\centering\includegraphics[width=0.5\textwidth]{ML_types.jpeg}
+
+\tiny From [here](https://friendsofyates.org/kcyo.php?cname=explanation+of+machine+learning&cid=7)
+
+## Common nomenclature in ML
+
+- Features: Input variables used to make predictions.
+- Target/Label: Desired output for supervised learning.
+
+- Training data: Data used to train the model.
+- Test data: Data used to evaluate the model's performance.
+
+- Model: Algorithm applied to the data.
+- Loss function: Measures how well the model's predictions match the true labels.
+- Training: Process of adjusting model parameters to minimize loss.
+
+## Types of machine learning
+
+- __Supervised Learning__: Learn from labeled data to predict outcomes.
+- __Unsupervised Learning__: Discover hidden patterns in unlabeled data.
+- __Reinforcement Learning__: Learn by interacting with an environment and receiving feedback.
+
+In supervised learning (the majority of the focus of this course) we minimise a loss function $L(y, x)$ to estimate $\hat{f}$ using target variable $y$ and features $x$. The structure of $f$ can be more or less anything we like
+
+## Common ML techniques
+
+- Decision Trees / Random Forests: Flowchart-like structures for decision-making.
+- Support Vector Machines: Find the hyperplane that best divides datasets.
+- Gradient boosting: Adding together weaker learners (usually decision trees)
+- __Neural Networks__: Creates a network of inter-dependent weights that are learnt to produce predictions
+
+Supervised learning divided up into:
+
+- Regression: Target variable is continuous.
+- Classification: Target variable is discrete
+- Clustering: No target variable, just group similar data points together.
+
+## Focussing on neural networks
+
+- The majority of this course will be focussed on how to use neural networks to perform supervised and unsupervised learning
+
+We will cover:
+
+- Deep Learning: Neural networks with many layers.
+- Convolutional Neural Networks (CNNs): Specialised for image data.
+- Recurrent Neural Networks (RNNs): Specialised for time series
+- Tranformer models: specialised for text analysis (but also for time series in general)
+
+## Some special NN terminology
+
+Neural networks have:
+
+- Input Layer: Receives raw data.
+- Hidden Layers: Layers between input and output. Process inputs from previous layers.
+- Output Layer: Provides the final prediction/result.
+- Weights and biases: Key parameters that tell you how you did
+
+Train a neural network by:
+
+- Backpropagation: adjusts weights based on the error in prediction.
+- Setting the learning rate: determines the step size during weight updates.
+- Setting the number of epochs: the number of times the training data is shown to the network.
+- Setting the batch size: the number of training samples used per iteration
+
+## NNs in pictures
+
+\centering\includegraphics[width=0.6\textwidth]{NN_pic.png}
+
+\tiny From [here](https://towardsdatascience.com/everything-you-need-to-know-about-neural-networks-and-backpropagation-machine-learning-made-easy-e5285bc2be3a)
+
+## How to fit a neural network
+
+1. Data Prep: training/test split, feature extraction
+2. Model Initialization: guess initial parameter values
+3. Forward Propagation: pass input data through the network to get a prediction
+4. Loss Computation: work out how badly you did
+5. Backpropagation: calculate how you need to change the weights to reduce the loss
+6. Weight Update: use an optimisation algorithm to estimate new weight values
+7. Repeat!
+
+Steps 2 - 7 are all done by the package but we will go through how they all work (in principle)
+
+## Let's get to a simple regression example
+
+```{r}
+data(mtcars)
+data <- mtcars %>% select(hp, wt, mpg) %>% 
+  scale() %>% 
+  as.data.frame()
+str(data) # Target is mpg
+```
+
+## Data prep
+
+```{r}
+set.seed(123) # For reproducibility
+train_indices <- sample(1:nrow(data), 0.8 * nrow(data))
+train_data <- data[train_indices, ]
+test_data <- data[-train_indices, ]
+x_train <- train_data %>% select(hp, wt) %>% as.matrix()
+y_train <- train_data$mpg
+x_test <- test_data %>% select(hp, wt) %>% as.matrix()
+y_test <- test_data$mpg
+```
+
+## Compile the model
+
+```{r}
+library(keras)
+model <- keras_model_sequential() %>%
+  layer_dense(units = 32, 
+              activation = 'relu', 
+              input_shape = c(2)) %>%
+  layer_dense(units = 1)
+
+model %>% compile(
+  optimizer = "adam",
+  loss = "mse",
+  metrics = c("mean_absolute_error")
+)
+```
+
+## Train the model
+
+```{r, results='hide'}
+history <- model %>% fit(
+  x_train, y_train,
+  epochs = 50,
+  batch_size = 16,
+  validation_data = list(x_test, y_test)
+)
+```
+
+## Evaluate performance
+
+```{r}
+plot(history)
+results <- model %>% evaluate(x_test, y_test)
+cat("Test Loss:", results[1], "\n")
+cat("Test Mean Absolute Error:", results[2], "\n")
+```
+
+
+## Now a simple classification example
+
+```{r}
+data(iris)
+```
+... some normalisation... then...
+```{r, include = FALSE}
+# Convert species to one-hot encoded format
+
+# Normalize features
+normalize <- function(x) {
+  return((x - mean(x)) / sd(x))
+}
+
+iris$Sepal.Length <- normalize(iris$Sepal.Length)
+iris$Sepal.Width <- normalize(iris$Sepal.Width)
+iris$Petal.Length <- normalize(iris$Petal.Length)
+iris$Petal.Width <- normalize(iris$Petal.Width)
+```
+```{r}
+iris$Species <- as.factor(iris$Species)
+encoded_species <- to_categorical(as.numeric(iris$Species) - 1)
+str(iris)
+```
+
+## Set up training and test data
+
+```{r}
+# Split data into training and test sets
+set.seed(123) # For reproducibility
+train_indices <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+x_train <- train_data %>% 
+  select(Sepal.Length, Sepal.Width, 
+         Petal.Length, Petal.Width) %>% as.matrix()
+y_train <- encoded_species[train_indices, ]
+
+x_test <- test_data %>% 
+  select(Sepal.Length, Sepal.Width, 
+         Petal.Length, Petal.Width) %>% as.matrix()
+y_test <- encoded_species[-train_indices, ]
+```
+
+## Set up and compile the model
+
+```{r}
+model <- keras_model_sequential() %>%
+  layer_dense(units = 32, activation = 'relu', 
+              input_shape = c(4)) %>%
+  layer_dense(units = 3, activation = 'softmax')
+
+model %>% compile(
+  optimizer = "adam",
+  loss = "categorical_crossentropy",
+  metrics = c("accuracy")
+)
+```
+
+## Train the model
+
+```{r, results = 'hide'}
+history <- model %>% fit(
+  x_train, y_train,
+  epochs = 50,
+  batch_size = 16,
+  validation_data = list(x_test, y_test)
+)
+```
+
+## Assess the results
+
+```{r, results = 'hide'}
+predictions <- model %>% predict(x_test) 
+colnames(predictions) <- colnames(y_test) <- levels(iris$Species)
+predictions_final <- colnames(predictions)[max.col(predictions)]
+y_test_final <- colnames(y_test)[max.col(y_test)]
+confusion_matrix <- table(Predicted = predictions_final,
+                          Actual = y_test_final)
+```
+
+```{r}
+print(confusion_matrix)
+```
+
+## Summary
+
+- We will focus on fitting neural networks to regression models (including image data), time series models, and classification models
+- We will use the `keras` package to do most of the work for us
+- Most of the clever part is in the model definition
+- In the next class we will go through what is happening underneath the hood
