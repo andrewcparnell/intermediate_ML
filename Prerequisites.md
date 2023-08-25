@@ -41,7 +41,7 @@ install.packages(c('nnet','ggplot2','BART','BASS','BayesGPfit','mclust','kernlab
 
 ### Cloud version
 
-If you are struggling to install keras or you have a computer that does not allow you administrator access you can try to install keras and the other packages in the cloud version of Rstudio at https://posit.cloud. You need to create an account and, if using the free version, can install keras with:
+If you are struggling to install keras or you have a computer that does not allow you administrator access you can try to install keras and the other packages in the cloud version of Rstudio at https://posit.cloud. You need to create a (paid unfortunately) account and after that you can install keras with:
 
 ```{r,eval=FALSE}
 install.packages('keras')
@@ -50,7 +50,6 @@ install_keras(method="virtualenv", envname="myenv", pip_options = "--no-cache-di
 library(tensorflow)
 install_tensorflow()
 ```
-
 
 ### Troubleshooting
 
