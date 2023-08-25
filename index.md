@@ -25,9 +25,9 @@ Time  | Class
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:15-10:15 | [Recurrent neural networks and transformers](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
+9:15-10:15 | [Recurrent neural networks and transformers](https://andrewcparnell.github.io/intermediate_ML/slides/class_3_RNNs.pdf) 
 10:15-10:30 | Break
-10:30-11:30 | [Probabilistic machine learning](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
+10:30-11:30 | [Probabilistic machine learning](https://andrewcparnell.github.io/intermediate_ML/slides/class_4_probML.pdf) 
 11:30-11:45 | Break
 11:45-13:00 | Guided practical: topic [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.R)
 13:00-14:00 | Lunch
@@ -37,9 +37,9 @@ Time  | Class
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:15-10:15 | [Dimension reduction and autoencoders](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
+9:15-10:15 | [Dimension reduction and autoencoders](https://andrewcparnell.github.io/intermediate_ML/slides/class_5_dimensionreduction.pdf) 
 10:15-10:30 | Break
-10:30-11:30 | [Clustering](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
+10:30-11:30 | [Clustering](https://andrewcparnell.github.io/intermediate_ML/slides/class_6_dimensionreduction.pdf) 
 11:30-11:45 | Break
 11:45-13:00 | Guided practical: topic [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.R)
 13:00-14:00 | Lunch

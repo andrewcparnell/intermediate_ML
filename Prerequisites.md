@@ -14,9 +14,9 @@ As this module will be delivered online please install [Zoom](https://www.zoom.u
 
 Install the following using the corresponding links
 
--	R: [http://www.r-project.org](http://www.r-project.org)
+-	R: [https://www.r-project.org](https://www.r-project.org)
 
--	Rstudio (optional but recommended): [https://www.rstudio.com](https://www.rstudio.com)
+-	Rstudio (optional but recommended): [https://posit.co/products/open-source/rstudio/](https://posit.co/products/open-source/rstudio/)
 
 
 ### Step 2
