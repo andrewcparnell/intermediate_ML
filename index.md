@@ -7,7 +7,9 @@ output: html_document
 
 If you want to learn more about the module please see the [introduction](https://andrewcparnell.github.io/intermediate_ML/intro.html). Instructions to install the required software can be found [here](https://andrewcparnell.github.io/intermediate_ML/Prerequisites.html). All the raw files and code can be found [on GitHub](https://www.github.com/andrewcparnell/intermediate_ML) (click 'Code' > 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate.
 
-Please note that the course will be recorded so please turn off video if you do not wish to be shown on the recordings. 
+As this module will be delivered online please install [Zoom](https://www.zoom.us) and [Slack](https://slack.com) to access the videos and interactive components of the course. All the Zoom links to the meeting will be posted to the Slack `#zoom-links` channel. 
+
+Please note that the course will be recorded so please turn off video if you do not wish to be shown on the recordings. Recordings will be posted in the same Slack link the following day.
 
 ## Day 1: Deep Dive into Supervised Learning
 
