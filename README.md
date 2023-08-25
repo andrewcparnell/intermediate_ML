@@ -1,25 +1,28 @@
-# 4 day course: Introduction to Bayesian hierarchical modelling using R 
+# 4 day course: Intermediate to advanced machine learning in R 
 
 ## About
 
-This course will cover introductory hierarchical modelling for real-world data sets from a Bayesian perspective. Hierarchical (or mixed-effects) models arise when data have a structure that implies standard linear regression type models are inappropriate for estimating the effect of an explanatory variable on the response. Common examples of hierarchically-structured data include: data containing replicates, data having a nested structure (replicates within plots), or when some variables are required for modelling but are not of primary concern. 
+This intensive 4-day course provides an in-depth exploration of machine learning using the popular open-source statistical software, R. Participants are assumed to have a basic working knowledge of regression and supervised learning techniques and so will gain a further understanding of various intermediate and advanced machine learning algorithms, how they work, and how to implement them using R's ecosystem of packages. Real-world data sets will be used to offer hands-on experience and help participants understand the practical applications of the covered concepts.
 
-Bayesian Hierarchical Models (BHMs) lie at the forefront of statistics research and are a vital tool in the scientist’s toolbox. The course focuses on introducing concepts and demonstrating good practice in hierarchical models. All methods are demonstrated with data sets which participants can run themselves. Participants will be taught how to fit hierarchical models using the Bayesian modelling software JAGS and Stan through the R software interface.
+By the end of this course, students should be able to:
+1.	Understand and implement advanced supervised learning techniques such as CNNs, RNNs, Transformer Models, and Bayesian Machine Learning methods.
+2.	Understand and implement advanced unsupervised learning techniques including various clustering, dimension reduction, and anomaly detection methods.
+3.	Apply these techniques to real-world datasets and interpret the results.
+4.	Understand the underlying methods and assumptions/drawbacks of these techniques.
 
-The course covers the full gamut from simple regression models through to full generalised multivariate hierarchical structures. A Bayesian approach is taken throughout, meaning that participants can include all available information in their models and estimate all unknown quantities with uncertainty. Participants are encouraged to bring their own data sets for discussion with the course tutors.
+## Teaching Format
+Each day will consist of 2-3 lectures with regular discussion and Q&A sessions. In the afternoons we will cover guided practicals (tutors and students running code and explaining results through worked examples and case studies) and self-guided exercise sheets. Students are welcome to bring their own data and discuss it with the tutors. 
 
 ## Intended audience
 
-Research postgraduates, practicing academics, or other professionals from any field who would like to learn about Bayesian modelling and how it can help them produce better quality information from their data. 
+Academics and post-graduate students working on projects where advanced machine learning and predictive modelling will be useful.
 
 ## Pre-requisites
 
-Participants should have :
+A basic understanding of statistical concepts such as linear and logistic regression models. Basic machine learning techniques such as Random Forests, Gradient Boosting, k-NN, SVMs. 
 
- - A basic understanding of regression methods and generalised linear models.
- - Some familiarity with R including the ability to import/export data, manipulate data frames, fit basic statistical models, and generate simple exploratory and diagnostic plots.
- - A laptop/personal computer with a working version or R and RStudio installed. R and RStudio are supported by both PC and Mac and can be downloaded for free by following these links: [R](http://cran.r-project.org), [Rstudio](http://www.rstudio.com/products/rstudio/download/).
+Good familiarity with R. Ability to import/export data, manipulate data frames, fit basic machine learning models (listed above) and generate simple exploratory and diagnostic plots. 
 
 ## Start the course
 
-You can start browsing the course by visiting the [timetable](https://andrewcparnell.github.io/bhm_course)
+You can start browsing the course by visiting the [timetable](https://andrewcparnell.github.io/intermediate_ML)
