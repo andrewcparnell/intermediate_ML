@@ -42,8 +42,8 @@ model %>% compile(
 )
 history <- model %>% fit(
   x_train, y_train,
-  epochs = 50,
-  batch_size = 16,
+  epochs = 50, # Number of passes through the data set
+  batch_size = 16, # Samples used in each gradient update
   validation_data = list(x_test, y_test)
 )
 ```

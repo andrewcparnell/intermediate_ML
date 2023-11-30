@@ -1,5 +1,5 @@
 ---
-title: 'Day 1: Self-guided practical - Using R for linear regression and GLMs'
+title: 'Day 1: Self-guided practical - Fitting DNNs using keras in R'
 author: "Andrew Parnell"
 output:
   html_document:
@@ -22,40 +22,45 @@ lapply(pkgs, library, character.only = TRUE)
 
 ## Introduction
 
-Welcome to the first user-guided practical on linear regression and GLMs. In this practical you will:
+Welcome to the first user-guided practical on fitting deep neural networks in R with keras. In this practical you will:
 
-- Fit a basic linear regression model
-- Check the model fit and the residuals
-- Fit a binomial GLM model
-- Fit a Poisson GLM and compare it to a negative binomial one
+- Fit some basic NNs using keras
+- Explore the different options for how the NNs are constructed
+- Compare the performance on some real data sets
+- Create some ggplots of the output
 
-There are four sections. You should work your way through the questions and put your hand up if you get stuck. There is an answer script given at the bottom but please try not to use it unless you are completely stuck and cannot ask a question.
+There are three sections. You should work your way through the questions and put your hand up if you get stuck. There is an answer script given at the bottom but please try not to use it unless you are completely stuck and cannot ask a question.
 
 ***
 
-You can run the code from these practicals is by loading up the `.Rmd` (Rmarkdown) file in the same directory in Rstudio. Feel free to add in your own answers, or edit the text to give yourself extra notes. You can also run the code directly by highlighting the relevant code and clicking `Run`. Much of this material overlaps with the class slides so sometimes if you get stuck you might get a clue by looking at the `.Rmd` file in the `slides` folder.
+You can run the code from these practicals by loading up the `.Rmd` (Rmarkdown) file in the same directory in Rstudio. Feel free to add in your own answers, or edit the text to give yourself extra notes. You can also run the code directly by highlighting the relevant code and clicking `Run`. Much of this material overlaps with the class slides so sometimes if you get stuck you might get a clue by looking at the `.Rmd` file in the `slides` folder.
 
 One final small note: if you are copying R commands from the pdf or html files into your R script or console window sometimes the inverted commas can copy across incorrectly. If you get a weird message saying `Error: unexpected input` you usually just need to delete/replace the inverted commas.
 
 
-## Task set 1: linear regression
+## Task set 1: Fitting different types of neural network with keras in R
 
-The `airquality` data set is included with R. You can find a description of the data at `help(airquality)` and can get at it simply by typing `airquality` at the R command prompt. Let's suppose we're interested in predicting the variable `Ozone` from the other variables
+The data set `dataset_boston_housing()` is included in the `keras` R package. Start a script and load in the `tidyverse` and `keras` packages. 
 
 Tasks:
 
+1. Load in the data set and check that you understand the structure of the dataset using `glimpse` or `str`. What are the dimensions of the training and test data sets? 
 
-1. First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the `help(airquality)` file (see the example at the bottom of that page).
+1. Scale the training and test set data. Create some simple ggplots of the data including a histogram of the target variable (over training and test set), and some scatter plots of the relationship between the features and the target variable (you can choose which features to plot)
 
-1. Fit a linear regression model using `lm` with `Ozone` as the response and all the other variables as covariates. Use the `summary` method to interpret your findings. (Note that R here is automatically removing rows with missing variables)
+1. Write a function in R to create a simple neural network model with two hidden layers (see the `mnist_keras_cnn.R` for examples). Try experimenting with different layers. Create two models, one with 2 layers nad another with 6 layers. What are the differences in the architecture of these two models? Explore different layer types
 
-1. Have a look at the residuals of the model (e.g. histograms and QQ-plots). Does the model fit well? 
- 
-1. Try another model but this time using the log of Ozone instead. Does it fit better?
- 
-1. Identify the one strange observation and see if you can work out what happened that day
- 
-1. You can get the AIC of this model with e.g. `AIC(my_model)`. Recall that lower AIC means a better model. Try some more models and see if you can get a lower AIC value. Some ideas might include: interactions between terms (e.g. include `+ Wind*Temp`), quadratic functions (e.g. include `+ I(Wind^2)`), and changing month and day to be factor rather than numerical variables. 
+1. Fit both models to the training data. What parameters do you need to specify for the training process (think about epochs, batch size, etc)? Explain the significance of the parameters you chose for the fit function. How might they affect the training process and the final performance of the model?
+
+1. Evaluate both models on the test dataset. What metrics will you use to assess the performance of the models? How do the two models compare in terms of their performance on the test set? What might be the reasons for any observed differences?
+
+1. Using ggplot2, create a plot to visualize the test set performance with the true test target values on the x-axis and the predicted values on the vertical axis. Can you put the predictions from both models on this plot? What insights can you draw?
+
+1. Finally, have a think about 
+
+
+The `airquality` data set is included with R. You can find a description of the data at `help(airquality)` and can get at it simply by typing `airquality` at the R command prompt. Let's suppose we're interested in predicting the variable `Ozone` from the other variables
+
 
 ## Task set 2: logistic regression
 
@@ -92,44 +97,87 @@ If you did all the above and have time to spare, try these:
 
 <details>
   <summary>Task set 1</summary>
-  ```{r ts1}
-  str(airquality)
-pairs(airquality) # Sees to be interesting relationship between wind, temp and ozone. Less obvious relationship between Solar and Ozone. Unsurprisingly relationship between month and temp non-linear
+```{r ts1}
+# Load necessary libraries
+library(keras)
+library(ggplot2)
 
-mod_1 = lm(Ozone ~ ., data = airquality)
-summary(mod_1) # 'significant' variables are solr, wind, temp, month. Month being treated incorrectly? Perhaps should be input as a factor?
+# Part 1: Load the Boston housing data
+dataset <- dataset_boston_housing()
+train_data <- dataset$train$x
+train_labels <- dataset$train$y
+test_data <- dataset$test$x
+test_labels <- dataset$test$y
 
-# Histogram and qq plot of residuals
-hist(mod_1$residuals, breaks = 30) #A bit skewed
-qqnorm(mod_1$residuals)
-qqline(mod_1$residuals) # Not great at the top end
+# Preprocess the data
+train_data <- scale(train_data)
+test_data <- scale(test_data)
 
-mod_2 = lm(log(Ozone) ~ ., data = airquality)
-summary(mod_2) # Now only solar, wind and temp. 
-hist(mod_2$residuals, breaks = 30) # Much better - still one weird value
-qqnorm(mod_2$residuals)
-qqline(mod_2$residuals) # Much better - apart from one
+# Split the training data into train and validation sets (75/25 split)
+set.seed(123) # for reproducibility
+index <- sample(1:nrow(train_data), nrow(train_data) * 0.75)
+x_train <- train_data[index,]
+y_train <- train_labels[index]
+x_val <- train_data[-index,]
+y_val <- train_labels[-index]
 
-which.min(mod_2$residuals) # Is it observations 17 or 21???
-airquality[c(17,21),] # It's definitely observation 21. Has an Ozone value of 1. Possibly incorrect?
+# Define a function to create a CNN model
+create_model <- function(layers) {
+  model <- keras_model_sequential()
+  model %>%
+    layer_dense(units = 64, activation = 'relu', input_shape = dim(train_data)[2]) %>%
+    layer_dense(units = 64, activation = 'relu')
+  
+  for (i in 1:layers) {
+    model %>%
+      layer_dense(units = 64, activation = 'relu')
+  }
+  
+  model %>%
+    layer_dense(units = 1)
+  
+  model %>% compile(
+    optimizer = 'rmsprop', 
+    loss = 'mse', 
+    metrics = c('mean_absolute_error')
+  )
+  return(model)
+}
 
-AIC(mod_2) # 173.1773
-# Try some other models
-mod_3 = lm(log(Ozone) ~ .*., data = airquality) # All 2-way interactions
-summary(mod_3)
-AIC(mod_3) # 187.0112
-mod_4 = lm(log(Ozone) ~ (.*.)^3, data = airquality) # All 3-way interactions
-summary(mod_4)
-AIC(mod_4) # 185.8515
-# Model with month as a factor
-mod_5 = lm(log(Ozone) ~ . - Month + as.factor(Month), data = airquality)
-summary(mod_5)
-AIC(mod_5) # 177.8937
-# Model without day
-mod_6 = lm(log(Ozone) ~ . - Day - Month + as.factor(Month), data = airquality)
-summary(mod_6)
-AIC(mod_6) # 176.3198 # Very slightly 'better'
-  ```
+# Create and fit the models
+model_2_layers <- create_model(2)
+model_6_layers <- create_model(6)
+
+history_2_layers <- model_2_layers %>% fit(
+  x_train, y_train, 
+  epochs = 100, batch_size = 16, 
+  validation_data = list(x_val, y_val)
+)
+
+history_6_layers <- model_6_layers %>% fit(
+  x_train, y_train, 
+  epochs = 100, batch_size = 16, 
+  validation_data = list(x_val, y_val)
+)
+
+# Evaluate the models on the test set
+score_2_layers <- model_2_layers %>% evaluate(test_data, test_labels, verbose = 0)
+score_6_layers <- model_6_layers %>% evaluate(test_data, test_labels, verbose = 0)
+
+# Prepare data for plotting
+plot_data <- data.frame(
+  epoch = rep(1:100, 2),
+  loss = c(history_2_layers$metrics$loss, history_6_layers$metrics$loss),
+  val_loss = c(history_2_layers$metrics$val_loss, history_6_layers$metrics$val_loss),
+  model = rep(c("2 Layers", "6 Layers"), each = 100)
+)
+
+# Plotting
+ggplot(plot_data, aes(x = epoch, y = val_loss, color = model)) +
+  geom_line() +
+  labs(title = "Validation Loss over Epochs", x = "Epoch", y = "Validation Loss") +
+  theme_minimal()
+```
 </details>
 
 <details>
