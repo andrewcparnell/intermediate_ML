@@ -1,5 +1,5 @@
 ---
-title: 'Class X: Topic'
+title: 'Class 7: Anomaly Detection'
 author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
   \newline PRESS RECORD 
@@ -51,7 +51,7 @@ tidyverse_cran_downloads %>%
 
 ## A simple example: CRAN downloads from `anomalize` - plot
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message=FALSE, results='hide'}
 library(anomalize)
 tidyverse_cran_downloads %>%
     filter(package == "dplyr") %>%
@@ -113,7 +113,45 @@ Can be applied to a data set directly, but more commonly applied to the residual
 
 (Recently extended to work on streaming data rather than just windows)
 
-## Quick example of `anomalize` package
+## Time Series Anomaly Detection with `tsoutliers`
+
+Perhaps the most basic time series AD package is `tsoutliers`
+
+- Package works by fitting ARIMA models to the data and then looking at different types of outliers
+- Produces predictions and also potential adjustments to the data that would remove the outliers and make the data set `cleaner'
+- Allows for ARIMAX type data (e.g. time series data with extra regressors)
+
+## Types of outlier identified by `tsoutliers`
+
+- Additive Outliers (AO), Innovational Outliers (IO), Level Shifts (LS), Temporary Changes (TC), and Seasonal Level Shifts (SLS).
+- AO are sudden, abnormal spikes or drops in the time series that are not part of the usual pattern or trend.
+- IO are irregularities that introduce a shock to the system, affecting the time series values both at the occurrence and subsequent periods.
+- LS are sudden, lasting change in the level of the time series, reflecting a structural change in the process.
+- TC are short-term anomalies where the time series deviates from its usual pattern for a brief period before returning to normal.
+- SLS are similar to LS but occur in a seasonal pattern, indicating a permanent change in the seasonal component of the time series.
+
+AO, IO and LS are the defaults looked for
+
+## Revision: ARIMA models
+
+- Combination of AR and MA: ARIMA models blend AutoRegressive (AR) and Moving Average (MA) approaches, where AR models leverage past values and MA models use past forecast errors for prediction
+- Integration for Non-Stationarity: The 'I' in ARIMA stands for 'Integrated' and involves differencing the data to achieve stationarity, essential for time series forecasting
+- Parameter Specification: Characterized by three parameters (p, d, q) - 'p' for the order of the AR part, 'd' for the degree of differencing, and 'q' for the order of the MA part
+- Flexibility and Adaptability: Suitable for a wide range of time series data, capable of modeling various patterns and structures in both stationary and non-stationary data
+
+Can also have seasonal ARIMA models
+
+## Example of using tsoutliers
+
+\tiny
+
+```{r, warning=FALSE}
+library(tsoutliers)
+data(hicp) # Multivariate time series
+tso(y = log(hicp$`011300`))
+```
+
+## Example of `anomalize` package
 
 ```{r, eval = FALSE, message=FALSE}
 library(anomalize)
@@ -138,87 +176,41 @@ tidyverse_cran_downloads %>%
     plot_anomalies(time_recomposed = TRUE)
 ```
 
-
-
-
 ## Machine Learning Methods: `stray` approach
 
 - stray = STReam AnomalY. Ideal for high dimensional data
-- Performs the AD approach on high
+- Uses $k$-nearest neighbours to find the distances between the observations in a high dimensional space
+- Uses ideas from Extreme value theory (EVT) to define a threshold and identify the gaps between the observations
+- Enables the method to capture both 'in-liers' and outliers
+- Produces both a list of outliers and an outlier score for further analysis
 
-Random Projection for Dimensionality Reduction: STRAY utilizes random projection techniques to reduce high-dimensional data into a lower-dimensional space, maintaining the relative distances between data points, which is crucial for accurately identifying anomalies in complex datasets.
-Density-Based Clustering for Outlier Detection: After dimensionality reduction, it employs density-based clustering algorithms, such as DBSCAN or OPTICS, to identify clusters of normal data points and flag points that do not belong to any cluster as anomalies.
-Handling of High-Dimensional Data: Specifically designed for high-dimensional datasets, STRAY effectively tackles the "curse of dimensionality" by addressing challenges like data sparsity and the difficulty of visualizing high-dimensional spaces, making it suitable for applications like genomics, finance, and image processing.
+## Example of using the stray package
 
+Very fast and pretty good
 
-- Unsupervised learning for anomaly detection
-- Common algorithms: K-means, DBSCAN, Isolation Forest
-- Pros and cons of machine learning methods
+```{r, eval = FALSE}
+library(stray)
+set.seed(123)
+multivariate_data <- cbind(rnorm(100), rnorm(100))
+results <- find_HDoutliers(multivariate_data,
+                           alpha = 0.2, # Tail value for outliers
+                           k = 10) # Number of neighbours for knn 
+most_outlying <- which.max(results$out_scores) # Useful to see 
+multivariate_data[(most_outlying-2):(most_outlying+2),]
+```
 
-## Machine Learning: K-means Clustering
-- Principle of K-means clustering
-- Implementing K-means in R
-- Identifying anomalies through clustering
+## Other machine learning approaches
 
-## Machine Learning: DBSCAN
-- Density-Based Spatial Clustering
-- DBSCAN implementation in R
-- Anomaly detection with DBSCAN
+Lots of other unsupervised approaches are used before running an AD algorithm
 
-## Machine Learning: Isolation Forest
-- Concept of Isolation Forest
-- R implementation
-- Use cases and effectiveness
+- K-means and mixture models (covered yesterday) commonly used
+- DBSCAN is a spatial clustering algorithm that differentiates between core points (inside a cluster), border points (on the edge of a cluster), and noise points (isolated, outlier points)
+- Isolation Forests is a version of random forests that spots data points that are commonly split at the top of a tree and are therefore likely to be outliers (R package `isotree`)
 
-## Hybrid Methods: Overview
-- Combining statistical and machine learning approaches
-- Advantages of hybrid methods
-- Key considerations
+## Summary
 
-## Time Series Anomaly Detection
-- Specifics of time series data
-- `forecast` package in R
-- Detecting anomalies in time series
-
-## Anomaly Detection in Time Series: `anomalize` Package
-- Introduction to `anomalize`
-- Decomposition of time series data
-- Detecting and visualizing anomalies
-
-## Case Study: Financial Data
-- Overview of financial data set
-- EDA and anomaly detection
-- Insights and interpretations
-
-## Case Study: Network Traffic Data
-- Characteristics of network data
-- Anomaly detection techniques applicable
-- Results and analysis
-
-## Best Practices in Anomaly Detection
-- Data preprocessing tips
-- Choosing the right method
-- Dealing with false positives/negatives
-
-## Challenges in Anomaly Detection
-- Handling high-dimensional data
-- Dynamic data behavior
-- Balancing sensitivity and specificity
-
-## Future Trends in Anomaly Detection
-- Integration of AI and deep learning
-- Real-time anomaly detection
-- Industry-specific solutions
-
-## 25: Conclusion
-- Recap of key points
-- Importance of continuous learning
-- Thanking the audience
-
-
-## Picture
-
-\centering\includegraphics[width=3cm]{maynooth_uni_logo.jpg}
-
-\let\thefootnote\relax\footnotetext{\tiny From URL}
+- Lots of different AD techniques; most based on quite traditional statistical methods
+- Usually perform a time series analysis, which can be quite simple or very complex, before running the AD algorithm
+- Lots of different types of anomaly which may or may not be appropriate to different data problems
+- See the examples in the script folder for more details on what these packages can do
 

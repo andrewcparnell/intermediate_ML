@@ -53,8 +53,8 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:15-10:15 | [Anomaly Detection](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
 10:15-10:30 | Break
-10:30-11:30 | [Course wrap-up](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
+10:30-11:30 | Guided practical: [`Anomalize`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_anomalize.R) [`tsoutliers`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_tsoutliers.R) [`stray`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_stray.R)
 11:30-11:45 | Break
-11:45-13:00 | Guided practical: autoencoders [(mnist - autoencoder)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_autoencoder.R) [(mnist - vae)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_variationalautoencoder.R), anomaly detection [(R code)](https://andrewcparnell.github.io/intermediate_ML/scripts/link.R)
+11:45-13:00 | Course wrap up, Q&A, open session
 13:00-14:00 | Lunch
-14:00-16:00 | Open session: Q&A, or work on your own data 
+14:00-16:00 | Open session: work on your own data 

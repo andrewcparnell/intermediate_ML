@@ -265,7 +265,7 @@ model <- keras_model_sequential() %>%
 model %>% compile(
   optimizer = "adam",
   loss = "categorical_crossentropy",
-  metrics = c("accuracy")
+  metrics = "accuracy"
 )
 ```
 
