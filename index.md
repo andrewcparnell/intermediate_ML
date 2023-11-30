@@ -19,7 +19,7 @@ Time  | Class
 10:15-10:30 | Break
 10:30-11:30 | [From simple to deep neural networks](https://andrewcparnell.github.io/intermediate_ML/slides/class_2_DL.pdf)
 11:30-11:45 | Break 
-11:45-13:00 | Guided practical: Fitting NNs using keras in R [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/tutor_1.R)
+11:45-13:00 | Guided practical: Fitting NNs using keras in R [(iris - keras)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_keras.R) [(Boston housing - by hand)](https://andrewcparnell.github.io/intermediate_ML/scripts/boston_nopackages.R) [(iris - by hand)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_nopackages.R) [(mnist - keras - CNN)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_cnn.R) [(mtcars - keras)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_nopackages.R)
 13:00-14:00 | Lunch
 14:00-16:00 | Self-guided practical: Using keras to fit CNNs in R [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/practical_1.html)
 
@@ -31,7 +31,7 @@ Time  | Class
 10:15-10:30 | Break
 10:30-11:30 | [Probabilistic machine learning](https://andrewcparnell.github.io/intermediate_ML/slides/class_4_probML.pdf) 
 11:30-11:45 | Break
-11:45-13:00 | Guided practical: topic [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.R)
+11:45-13:00 | Guided practical: fitting RNNs [(air passengers - RNN)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_rnn.R) [(air passengers - LSTM)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_lstm.R) [(air passengers - GRU)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_GRU.R) [(air passengers - no packages)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_nopackages_rnn.R) [(earthquakes - lstm - classification)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_nopackages_rnn.R) and probabilistic models [(mtcars - BART)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bart.R) [(mtcars - GP)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bayesgpfit.R) [(mtcars - bass)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bass.R) 
 13:00-14:00 | Lunch
 14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html) 
 
@@ -43,7 +43,7 @@ Time  | Class
 10:15-10:30 | Break
 10:30-11:30 | [Clustering](https://andrewcparnell.github.io/intermediate_ML/slides/class_6_clustering.pdf) 
 11:30-11:45 | Break
-11:45-13:00 | Guided practical: topic [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.R)
+11:45-13:00 | Guided practical: fitting UMAP [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_umap.R), $t$-SNE [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_tsne.R), Mclust [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_mclust.R), and Spectral clustering [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_spectral.R)
 13:00-14:00 | Lunch
 14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html)
 
@@ -55,6 +55,6 @@ Time  | Class
 10:15-10:30 | Break
 10:30-11:30 | [Course wrap-up](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
 11:30-11:45 | Break
-11:45-13:00 | Guided practical: topic [(R code)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.R)
+11:45-13:00 | Guided practical: autoencoders [(mnist - autoencoder)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_autoencoder.R) [(mnist - vae)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_variationalautoencoder.R), anomaly detection [(R code)](https://andrewcparnell.github.io/intermediate_ML/scripts/link.R)
 13:00-14:00 | Lunch
-14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html) 
+14:00-16:00 | Open session: Q&A, or work on your own data 

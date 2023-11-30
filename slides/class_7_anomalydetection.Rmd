@@ -1,0 +1,224 @@
+---
+title: 'Class X: Topic'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
+  \newline \vspace{1cm}
+  \newline https://andrewcparnell.github.io/intermediate_ML
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+classoption: "aspectratio=169"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+library(tidyverse)
+```
+
+## Introduction to Anomaly Detection (AD)
+
+- Anomaly detection refers to the process of identifying data points, observations, or patterns that deviate significantly from the norm or standard in a dataset. These  might be critical incidents, such as errors, fraud, or system failures
+- What you do with an anomaly will depend on the application; you might remove it, stop the whole experiment, or just ignore and note it down for later evaluation
+- We will explore lots of different methods in R for performing anomaly detection with examples for all of them
+
+## Anomaly Detection in R
+
+- We will use 3 main packages for performing AD, and discuss some other popular methods
+
+  1. `anomalize`: Implements a tidy AD algorithm that works well with dplyr and tidyr pipelines. Pretty user friendly (https://www.youtube.com/watch?v=Gk_HwjhlQJs)
+  2. `tsoutliers`: Use for detecting outliers in time-series data. Integrates well with ARIMA modeling and other time-series forecasting methods, though pretty slow
+  3. `stray`: Designed for AD in high-dimensional data. More aligned with machine learning techniques as it uses projection and clustering
+  
+- We mostly focus on finding anomalies in time series but AD can be used on any type of data
+  
+## A simple example: CRAN downloads from `anomalize`
+
+```{r, eval = FALSE}
+library(anomalize)
+tidyverse_cran_downloads %>%
+    filter(package == "dplyr") %>%
+    ungroup() %>%
+    time_decompose(count, method = "stl") %>%
+    anomalize(remainder, method = "iqr") %>%
+    time_recompose() %>%
+    plot_anomalies(time_recomposed = TRUE)
+```
+
+## A simple example: CRAN downloads from `anomalize` - plot
+
+```{r, echo = FALSE}
+library(anomalize)
+tidyverse_cran_downloads %>%
+    filter(package == "dplyr") %>%
+    ungroup() %>%
+    time_decompose(count, method = "stl") %>%
+    anomalize(remainder, method = "iqr") %>%
+    time_recompose() %>%
+    plot_anomalies(time_recomposed = TRUE)
+```
+
+## Types of Anomalies
+
+- Point Anomalies. A single 'anomalous' data point. But beware, a sudden spike in e.g. energy usage on a hot day might be normal, but the same spike on a mild day could be anomalous.
+- Collective Anomalies. A collection of 'anomalous' data points occurring together.
+- Seasonal Anomalies. Anomalies that occur in a seasonal pattern within time-series data.
+- Network Anomalies. Anomalies that occur in multiple time series simultaneously that might not be visible in a single series. 
+
+## Anomaly Detection Methods
+
+Often a time series model is fitted first and the anomaly detection routine is run on the leftover data (residuals).
+
+- Basic methods: Z-scores, Inter-Quartile Range, Grubbs test, Control charts
+- Statistical methods: Generalised-Extreme Studentised Deviate Test (GESD), Seasonal Hybrid ESD approach (Twitter / SH-ESD), Extreme value approaches
+- Machine learning approaches. Dimension reduction approaches (stray), RNNs (followed by statistical methods)
+- Hybrid methods. Using combinations of the above
+
+## Decomposition and Anomaly Detection
+
+Common to perform Seasonal Trend and irregular decomposition using Loess (STL) and running AD on the components:
+
+```{r, echo = FALSE}
+library(anomalize)
+decomposed_data <- tidyverse_cran_downloads %>%
+  filter(package == 'dplyr') %>% 
+  time_decompose(count, method = "stl", frequency = "auto", trend = "auto")
+decomposed_data %>% pivot_longer(-c(package, date),
+                                 names_to = 'Component',
+                                 values_to = 'Value') %>% 
+  ggplot(aes(x = date, y = Value)) +
+  geom_line() +
+  facet_grid(Component ~ .) +
+  labs(title = "STL Decomposition of dplyr Downloads",
+     x = "Date", y = "Count")
+```
+
+## Basic Methods: G-ESD
+
+- Iteratively tests for and removes the most extreme value as an outlier, allowing detection of multiple outliers in a dataset, as opposed to Grubbs test
+- Uses a studentised range statistic, supposedly a robust method for identifying outliers in normally distributed data
+- Effective for both small and large data sets, with an upper limit on the number of outliers found
+
+Can be applied to a data set directly, but more commonly applied to the residuals. Provides a list of potential values up to the maximum number of anomalies allowed
+
+## Seasonal Hybrid ESD approach
+
+- SH-ESD is an extension of the GESD test specifically for seasonal data by performing a seasonal decomposition and windowing of the data before running the GESD test
+- The decomposition allows for the detection of seasonal anomalies, which are extreme relative to a particular season or time frame but might not be extreme in the overall dataset
+- Not treated as a particular anomaly detection method but rather a decomposition method in `anomalize`
+
+(Recently extended to work on streaming data rather than just windows)
+
+## Quick example of `anomalize` package
+
+```{r, eval = FALSE, message=FALSE}
+library(anomalize)
+tidyverse_cran_downloads %>%
+    filter(package == "dplyr") %>%
+    ungroup() %>%
+    time_decompose(count, method = "stl") %>%
+    anomalize(remainder, method = "iqr") %>%
+    time_recompose() %>%
+    plot_anomalies(time_recomposed = TRUE)
+```
+
+## Output of `anomalize`
+
+```{r, echo = FALSE, results = 'hide', message=FALSE}
+tidyverse_cran_downloads %>%
+    filter(package == "tidyquant") %>%
+    ungroup() %>%
+    time_decompose(count, method = "stl") %>%
+    anomalize(remainder, method = "iqr") %>%
+    time_recompose() %>%
+    plot_anomalies(time_recomposed = TRUE)
+```
+
+
+
+
+## Machine Learning Methods: `stray` approach
+
+- stray = STReam AnomalY. Ideal for high dimensional data
+- Performs the AD approach on high
+
+Random Projection for Dimensionality Reduction: STRAY utilizes random projection techniques to reduce high-dimensional data into a lower-dimensional space, maintaining the relative distances between data points, which is crucial for accurately identifying anomalies in complex datasets.
+Density-Based Clustering for Outlier Detection: After dimensionality reduction, it employs density-based clustering algorithms, such as DBSCAN or OPTICS, to identify clusters of normal data points and flag points that do not belong to any cluster as anomalies.
+Handling of High-Dimensional Data: Specifically designed for high-dimensional datasets, STRAY effectively tackles the "curse of dimensionality" by addressing challenges like data sparsity and the difficulty of visualizing high-dimensional spaces, making it suitable for applications like genomics, finance, and image processing.
+
+
+- Unsupervised learning for anomaly detection
+- Common algorithms: K-means, DBSCAN, Isolation Forest
+- Pros and cons of machine learning methods
+
+## Machine Learning: K-means Clustering
+- Principle of K-means clustering
+- Implementing K-means in R
+- Identifying anomalies through clustering
+
+## Machine Learning: DBSCAN
+- Density-Based Spatial Clustering
+- DBSCAN implementation in R
+- Anomaly detection with DBSCAN
+
+## Machine Learning: Isolation Forest
+- Concept of Isolation Forest
+- R implementation
+- Use cases and effectiveness
+
+## Hybrid Methods: Overview
+- Combining statistical and machine learning approaches
+- Advantages of hybrid methods
+- Key considerations
+
+## Time Series Anomaly Detection
+- Specifics of time series data
+- `forecast` package in R
+- Detecting anomalies in time series
+
+## Anomaly Detection in Time Series: `anomalize` Package
+- Introduction to `anomalize`
+- Decomposition of time series data
+- Detecting and visualizing anomalies
+
+## Case Study: Financial Data
+- Overview of financial data set
+- EDA and anomaly detection
+- Insights and interpretations
+
+## Case Study: Network Traffic Data
+- Characteristics of network data
+- Anomaly detection techniques applicable
+- Results and analysis
+
+## Best Practices in Anomaly Detection
+- Data preprocessing tips
+- Choosing the right method
+- Dealing with false positives/negatives
+
+## Challenges in Anomaly Detection
+- Handling high-dimensional data
+- Dynamic data behavior
+- Balancing sensitivity and specificity
+
+## Future Trends in Anomaly Detection
+- Integration of AI and deep learning
+- Real-time anomaly detection
+- Industry-specific solutions
+
+## 25: Conclusion
+- Recap of key points
+- Importance of continuous learning
+- Thanking the audience
+
+
+## Picture
+
+\centering\includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+
+\let\thefootnote\relax\footnotetext{\tiny From URL}
+

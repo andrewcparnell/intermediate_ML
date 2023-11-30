@@ -68,7 +68,7 @@ The main goal is not to teach the computer the rules of what to do but to give i
 
 \centering\includegraphics[width=0.5\textwidth]{ML_types.jpeg}
 
-\tiny From [here](https://friendsofyates.org/kcyo.php?cname=explanation+of+machine+learning&cid=7)
+\let\thefootnote\relax\footnotetext{\tiny From https://friendsofyates.org/kcyo.php?cname=explanation+of+machine+learning&cid=7}
 
 ## Common nomenclature in ML
 
@@ -79,7 +79,7 @@ The main goal is not to teach the computer the rules of what to do but to give i
 - Test data: Data used to evaluate the model's performance.
 
 - Model: Algorithm applied to the data.
-- Loss function: Measures how well the model's predictions match the true labels.
+- Loss function: Measures how well the model's predictions match the true target values or labels.
 - Training: Process of adjusting model parameters to minimize loss.
 
 ## Types of machine learning
@@ -178,7 +178,7 @@ library(keras)
 model <- keras_model_sequential() %>%
   layer_dense(units = 32, 
               activation = 'relu', 
-              input_shape = c(2)) %>%
+              input_shape = 2) %>%
   layer_dense(units = 1)
 
 model %>% compile(

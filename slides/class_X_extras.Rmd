@@ -1,0 +1,55 @@
+---
+title: 'Class X: Topic'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
+  \newline \vspace{1cm}
+  \newline https://andrewcparnell.github.io/intermediate_ML
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+classoption: "aspectratio=169"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+library(tidyverse)
+```
+
+## Things still to cover
+
+-  Silhouette scores
+-  'Add' layers?
+-  This: https://tensorflow.rstudio.com/examples/
+-  Saving and loading a keras object
+-  Transfer learning
+-  Model tuning
+-  Things we don't cover 
+	-  Running models on a GPU
+	-  Basics of tensorflow
+	-  Double descent
+	-  Mathematics of these models
+	-  GANs
+-  Exercises
+	-  Compare BART, BASS and Bayesian GPs
+-  callbacks?
+-  UMAP
+-  Saving and loading keras models
+-  Optimisation functions: what is Adam etc?
+
+## Slide
+
+```{r}
+# Code
+```
+
+## Picture
+
+\centering\includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+
+\let\thefootnote\relax\footnotetext{\tiny From URL}
+

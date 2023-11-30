@@ -182,6 +182,8 @@ These all come from differentiating the loss function with respect to each of th
 
 ## 6 Weight updates
 
+\small
+
 Now update the weights according to the learning rate
 
 ```{r}
@@ -258,8 +260,7 @@ model <- keras_model_sequential() %>%
 
 \centering\includegraphics[width=0.6\textwidth]{cnn_pic.png}
 
-\tiny
-From (https://anhreynolds.com/blogs/cnn.html)
+\let\thefootnote\relax\footnotetext{\tiny From https://anhreynolds.com/blogs/cnn.html}
 
 ## Hyper-parameters for convolutional layers
 
@@ -275,7 +276,7 @@ From (https://anhreynolds.com/blogs/cnn.html)
 
 ## Summary 
 
-- We can fit most of these models very simply with `keras` ...
+- We have gone through how to fit one of these models by hand, but we could have done it very simply with `keras` ...
 - ... but it's useful to know the basics of what's happening in the background
 - The key challenge in creating these models is choosing the right structure for the network. We will talk more about this later
-- Once we have got the hang of creating these models we 
+- Once we have got the hang of creating these models we can fit a wide variety of models that can work really well

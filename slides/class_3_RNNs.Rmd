@@ -104,7 +104,7 @@ Two key gates:
 
 ## RNNs vs LSTMs vs GRUs
 
-\centering\includegraphics[width=0.6\textwidth]{rnn_lstm_gru_pic.png}
+\centering\includegraphics[width=\textwidth]{rnn_lstm_gru_pic.png}
 
 \let\thefootnote\relax\footnotetext{\tiny From http://dprogrammer.org/rnn-lstm-gru}
 

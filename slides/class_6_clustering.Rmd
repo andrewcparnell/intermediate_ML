@@ -55,8 +55,8 @@ ggpairs(oliveoil,
 
 Approximately:
 
-1. Neighbors: UMAP starts by looking at each data point and identifying its closest neighbors, forming a network of connections like a web.
-1. Building a Map: It then constructs a simplified map that represents the connections in a lower-dimensional space (like going from 3D to 2D). The goal is to make the distances between points on this new map as similar as possible to the distances in the original high-dimensional space.
+1. Neighbours: UMAP starts by looking at each data point and identifying its closest neighbours, forming a network of connections like a web.
+1. Building a Map: It then constructs a simplified map that represents the connections in a lower-dimensional space. The goal is to make the distances between points on this new map as similar as possible to the distances in the original high-dimensional space.
 1. Refining the Map: Through an iterative process, UMAP fine-tunes the map, adjusting and shifting points to ensure that close neighbors in the original space remain close in the new space, and far-away neighbors stay far away.
 1. Result: The final result is a simpler representation of the data that maintains much of the original structure. This allows us to visually understand complex relationships that might have been hard to see in the original high-dimensional space.
 
@@ -134,10 +134,10 @@ points(new_data_umap, col = 'blue', pch = 19)
 
 ## How does it work?
 
-1. Neighborhoods: t-SNE starts by figuring out the close friends (or neighbors) of each data point
+1. Neighbourhoods: t-SNE starts by figuring out the close friends (or neighbours) of each data point
 2. Creating a new map. It now creates a lower dimensional projection of all the data points but puts them in random positions
 3. Adjusting positions: It then moves data points around in the lower dimensional space to try to keep the same pattern. Just like UMAP - it’s looking for the low dimensional space to match the original data
-4. Perplexity. This key parameter controls how closely you bring data point together. The t-distribution underlying t-SNE has long details so can push data points further apart than other dimension reduction techniques
+4. Perplexity. This key parameter controls how closely you bring data point together. The t-distribution underlying t-SNE has long tails so can push data points further apart than other dimension reduction techniques
 5. Final map: it returns the optimised low dimensional projection subject to the perplexity parameter in d-dimensional space (you choose d)
 
 ## How does it work in a bit more detail?
@@ -162,7 +162,7 @@ Rtsne(data, dims = 2, perplexity = perplexity_value)
 
 ## Results
 
-```{r}
+```{r, echo = FALSE}
 # Load necessary libraries
 library(pdfCluster)
 library(Rtsne)

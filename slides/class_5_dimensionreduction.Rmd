@@ -102,7 +102,7 @@ ggplot(projected_df, aes(x = PC1, y = PC2, color = digit)) +
 ## Some notes on the previous slide
 
 - The PCA never saw the digit number, it only saw the images (I used the digit numbers just for the final plot)
-- I chose (and it's very common to choose) 2 principal component to plot, but you could choose many more
+- I chose (and it's very common to choose) 2 principal components to plot, but you could choose many more
 - The algorithm automatically orders the PCs and you can see how much variation each one captured in the data
 ```{r}
 summary(pca)$importance[,1:5] * 100

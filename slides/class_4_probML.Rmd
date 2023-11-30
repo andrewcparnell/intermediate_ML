@@ -46,7 +46,7 @@ There are lots of software packages for fitting Bayesian models though they most
 
 - `rstan`, `rjags`, `nimble` are R packages that can flexibly fit lots of different types of Bayesian model
 - `BART`, `dbarts`, `BartMachine` are R packages that fit a specialised type of Bayesian machine learning model (more on this next)
-- There are very few good packages for fitting Bayesian machine learning models in R, though the `tfprobability` package fits tensoflow models with a probabilistic layer (not clear if Bayesian or not). Currently very hard to use in R
+- There are very few good packages for fitting Bayesian machine learning models in R, though the `tfprobability` package fits tensorflow models with a probabilistic layer (not clear if Bayesian or not). Currently very hard to use in R
 
 ## How is a Bayesian model different from the models we have already covered?
 
