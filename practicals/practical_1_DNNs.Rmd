@@ -76,7 +76,7 @@ We already looked at the CIFAR-10 data set in keras. This time we're going to us
 
 7. If time, you could inspect more which images are most likely to be mis-classified and see if you can work out why the model might be going wrong by plotting some of these images. 
 
-## Task set 2: Text data
+## Task set 3: Text data
 
 There are more data sets that might be fun to analyse in the `keras` library, including `dataset_fashion_mnist`, `dataset_imdb` and `dataset_reuters`. Use the same pipeline above load in the datasets, explore and standardise them, then fit a suitable NN model and explore the performance. 
 
