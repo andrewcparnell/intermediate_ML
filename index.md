@@ -21,7 +21,7 @@ Time  | Class
 11:30-11:45 | Break 
 11:45-13:00 | Guided practical: Fitting NNs using keras in R [(iris - keras)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_keras.R) [(Boston housing - by hand)](https://andrewcparnell.github.io/intermediate_ML/scripts/boston_nopackages.R) [(iris - by hand)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_nopackages.R) [(mnist - keras - CNN)](https://andrewcparnell.github.io/intermediate_ML/scripts/mnist_keras_cnn.R) [(mtcars - keras)](https://andrewcparnell.github.io/intermediate_ML/scripts/iris_nopackages.R)
 13:00-14:00 | Lunch
-14:00-16:00 | Self-guided practical: Using keras to fit CNNs in R [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/practical_1.html) [(Need to learn ggplot?)](https://andrewcparnell.github.io/intermediate_ML/practicals/learn_ggplot2.R) 
+14:00-16:00 | Self-guided practical: Using keras to fit CNNs in R [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/practical_1_DNNs.html) [(Need to learn ggplot?)](https://andrewcparnell.github.io/intermediate_ML/practicals/learn_ggplot2.R) 
 
 ## Day 2: Advanced Supervised Learning Techniques
 
