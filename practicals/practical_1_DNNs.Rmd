@@ -8,6 +8,8 @@ output:
       collapsed: false
       smooth_scroll: false
   pdf_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -27,7 +29,7 @@ Welcome to the first user-guided practical on fitting deep neural networks in R 
 - Fit some basic NNs using keras
 - Explore the different options for how the NNs are constructed
 - Compare the performance on some real data sets
-- Create some ggplots of the output
+- Create some plots of the output
 
 There are three sections. You should work your way through the questions and put your hand up if you get stuck. There is an answer script given at the bottom but please try not to use it unless you are completely stuck and cannot ask a question.
 
@@ -37,105 +39,101 @@ You can run the code from these practicals by loading up the `.Rmd` (Rmarkdown) 
 
 One final small note: if you are copying R commands from the pdf or html files into your R script or console window sometimes the inverted commas can copy across incorrectly. If you get a weird message saying `Error: unexpected input` you usually just need to delete/replace the inverted commas.
 
-
 ## Task set 1: Fitting different types of neural network with keras in R
 
 The data set `dataset_boston_housing()` is included in the `keras` R package. Start a script and load in the `tidyverse` and `keras` packages. 
 
 Tasks:
 
-1. Load in the data set and check that you understand the structure of the dataset using `glimpse` or `str`. What are the dimensions of the training and test data sets? 
+1. Load in the data set and check that you understand its structure using `glimpse` or `str`. What are the dimensions of the training and test data sets? 
+2. Scale the training and test set features Create some simple ggplots of the data including a histogram of the target variable (over the training and test sets), and some scatter plots of the relationship between the features and the target variable (you can choose which features to plot)
 
-1. Scale the training and test set data. Create some simple ggplots of the data including a histogram of the target variable (over training and test set), and some scatter plots of the relationship between the features and the target variable (you can choose which features to plot)
+3. Write a function in R to create a simple neural network model with two hidden dense layers each with 64 hidden units (see the `iris_keras.R` for examples). Try experimenting with different layers. Create two models, one with 2 layers and another with 6 layers. What are the differences in the architecture of these two models? Explore different layer types
 
-1. Write a function in R to create a simple neural network model with two hidden layers (see the `mnist_keras_cnn.R` for examples). Try experimenting with different layers. Create two models, one with 2 layers nad another with 6 layers. What are the differences in the architecture of these two models? Explore different layer types
+4. Fit both models to the training data. What parameters do you need to specify for the training process (think about epochs, batch size, etc)? Explain the significance of the parameters you chose for the fit function. How might they affect the training process and the final performance of the model?
 
-1. Fit both models to the training data. What parameters do you need to specify for the training process (think about epochs, batch size, etc)? Explain the significance of the parameters you chose for the fit function. How might they affect the training process and the final performance of the model?
+5. Evaluate both models on the test dataset. What metrics will you use to assess the performance of the models? How do the two models compare in terms of their performance on the test set? What might be the reasons for any observed differences?
 
-1. Evaluate both models on the test dataset. What metrics will you use to assess the performance of the models? How do the two models compare in terms of their performance on the test set? What might be the reasons for any observed differences?
+6. Using ggplot2, create a plot to visualize the test set performance with the true test target values on the x-axis and the predicted values on the vertical axis. Can you put the predictions from both models on this plot? What insights can you draw?
 
-1. Using ggplot2, create a plot to visualize the test set performance with the true test target values on the x-axis and the predicted values on the vertical axis. Can you put the predictions from both models on this plot? What insights can you draw?
+7. Finally, have a think about how else you might change this model. Perhaps you could add in more layers, different numbers of hidden units, or layers of a different type. You could explore the test set performance of these models. Or you could try playing with some of the hyper parameters such as the number of epochs or batch size
 
-1. Finally, have a think about 
+## Task set 2: Image analysis
 
+We already looked at the CIFAR-10 data set in keras. This time we're going to use the CIFAR-100 data set which has 100 categories rather than 10. 
 
-The `airquality` data set is included with R. You can find a description of the data at `help(airquality)` and can get at it simply by typing `airquality` at the R command prompt. Let's suppose we're interested in predicting the variable `Ozone` from the other variables
+1. Use the `keras` library in R to load the `dataset_cifar100` dataset (it takes a little while to download so only run that command once). After loading, inspect the structure of the training and test datasets. What are the dimensions of the images and labels?
 
+2. Use the script in the `cifar10_keras_cnn.R` file to create some plots of the images and check they make sense (if you want to be super fancy you could translate the code to use `ggplot2`)
 
-## Task set 2: logistic regression
+3. Prepare the CIFAR-100 data for input into a CNN model. This involves reshaping and normalising the image values and converting the labels to categorical format. (again see previous R script)
 
-1. Load in the `horseshoe.csv` data set from the data directory and familiarise yourself with the data structure from the `data_description.txt` file
+4. Define a basic CNN model for image classification with the same structure as the `cifar10_keras_cnn.R` model. It should have convolutional layers, max pooling layers, and dense layers. Make sure you understand what each layer is doing, and make sure you change the dimensions to match the new number of categories. 
 
-1. Turn the `color` and `spine` variables into factors with their proper names
+5. Fit the CNN model to the CIFAR-100 training data. Set a suitable number of epochs and batch size (beware that it might be quite slow on your computer). 
 
-1. Familiarise yourself by plotting the data and exploring the structure between the variables
+6.  Generate a misclassification table for the CNN model using the CIFAR-100 test dataset. How does this table help in understanding the model's performance, particularly in identifying which classes are most frequently misclassified? (try your best to interpret it - it will be quite big so you might need to print out subsets of it). 
 
-1. Create a binary variable which contains only whether the satellite variable is >0 or not. We will use this as our response variable. Create a plot which shows the relationship of this variable with `width`.
+7. If time, you could inspect more which images are most likely to be mis-classified and see if you can work out why the model might be going wrong by plotting some of these images. 
 
-1. Fit a binomial glm (a logistic regression) with the binary variable as the response and `width` as a covariate. Summarise your findings
+## Task set 2: Text data
 
-1. Create a plot of the fitted values on top of a scatter plot of the data (hint: width on x-axis, binary response variable on y-axis)
+There are more data sets that might be fun to analyse in the `keras` library, including `dataset_fashion_mnist`, `dataset_imdb` and `dataset_reuters`. Use the same pipeline above load in the datasets, explore and standardise them, then fit a suitable NN model and explore the performance. 
 
-1. Try fitting some more models to the data with more variables (and perhaps interactions) to see if you can get the AIC lower. Compare your new models' fitted values to the first model
+## Extra questions (if time)
 
-## Task set 3: Poisson and Negative Binomial regression
+1. It's always fun to play around with the different layers in your models. Try ones you haven't tried before (see all the different layer functions in the `keras` package). Simiarly you could try different activation functions
 
-1. This time fit a Poisson GLM to the horseshoe data, using the original number of satellites rather than the binary version you fitted previously. Again use `width` as the sole covariate, and again plot the fitted values
-
-1. Now try a model with all of the covariates (make sure not to include the binary variable you created before). Summarise and see if there's any improvement. You might notice that more variables are important (compared to the previous binary logistic regression) because we're using more of the data
-
-1. A common occurrence is that the Poisson distribution is a poor fit to the data as the mean=variance relationship is rarely met. (You could check if the mean and the variance match for these data). A common alternative is to fit a Negative-Binomial GLM which has an extra parameter to measure excess variance (over-dispersion). The `glm` function doesn't have this distribution in it by default so you need to call in the MASS library with `library(MASS)`. The command will now be called `glm.nb` which will also try to estimate the over-dispersion parameter (the excess variance over the Poisson). Use `glm.nb` to fit a Negative Binomial GLM to these data, interpret your findings, see if the AIC improves, and plot your output.
-
-## Extra questions
-
-If you did all the above and have time to spare, try these:
-
-1. Another data sets which is worth fitting a linear regression model to is the `geese_isotopes.csv` data. You might like to see if one of the isotope values is affected by some of the other variables (sex, adult, etc)
-2. The whitefly data set. This is binomial (as used in the lectures) but you might like to additionally try some of the other variables and see which are important and why. The data set has particular issues with zero-inflation. See if you can find which zero data points are poorly predicted by the model.
+2. A much more advanced class of image analysis can be created by loading in pre-trained model weights. Have a look at some of the functions which start `application_` as these will load in much larger models which can then be stitched on to your particular application. You could play around with seeing if you can use some of these to improve the CIFAR or mnist accuracy. 
 
 ## Answers
 
 <details>
   <summary>Task set 1</summary>
-```{r ts1}
+```{r ts1, eval = FALSE}
 # Load necessary libraries
 library(keras)
-library(ggplot2)
+library(tidyverse)
 
 # Part 1: Load the Boston housing data
 dataset <- dataset_boston_housing()
 train_data <- dataset$train$x
-train_labels <- dataset$train$y
+train_target <- dataset$train$y
 test_data <- dataset$test$x
-test_labels <- dataset$test$y
+test_target <- dataset$test$y
+# Check dimensions here
+dim(train_data) # 404 by 13
+dim(test_data) # 102 by 13
 
+# Part 2
 # Preprocess the data
 train_data <- scale(train_data)
-test_data <- scale(test_data)
+test_data <- scale(test_data, # Make sure to scale them by the training data
+                   center = attr(train_data, "scaled:center"),
+                   scale = attr(train_data, "scaled:scale"))
 
-# Split the training data into train and validation sets (75/25 split)
-set.seed(123) # for reproducibility
-index <- sample(1:nrow(train_data), nrow(train_data) * 0.75)
-x_train <- train_data[index,]
-y_train <- train_labels[index]
-x_val <- train_data[-index,]
-y_val <- train_labels[-index]
-
-# Define a function to create a CNN model
+# Part 3
+# Define a function to create a CNN model with a given number of layers
+# Don't have to do it this way but quite good fun
 create_model <- function(layers) {
   model <- keras_model_sequential()
-  model %>%
-    layer_dense(units = 64, activation = 'relu', input_shape = dim(train_data)[2]) %>%
-    layer_dense(units = 64, activation = 'relu')
   
+  # First layer needs the intput shape
+  model %>%
+    layer_dense(units = 64, activation = 'relu', 
+                input_shape = ncol(train_data))
+  
+  # Middle layers all the same
   for (i in 1:layers) {
     model %>%
       layer_dense(units = 64, activation = 'relu')
   }
   
+  # Final layer needs one output
   model %>%
     layer_dense(units = 1)
   
+  # Compile it
   model %>% compile(
     optimizer = 'rmsprop', 
     loss = 'mse', 
@@ -144,112 +142,135 @@ create_model <- function(layers) {
   return(model)
 }
 
+# Part 4
 # Create and fit the models
-model_2_layers <- create_model(2)
+model_2_layers <- create_model(2) # Useful to print these out
 model_6_layers <- create_model(6)
 
 history_2_layers <- model_2_layers %>% fit(
-  x_train, y_train, 
-  epochs = 100, batch_size = 16, 
-  validation_data = list(x_val, y_val)
+  train_data, train_target, 
+  epochs = 20, batch_size = 16, 
+  validation_data = list(test_data, test_target)
 )
 
 history_6_layers <- model_6_layers %>% fit(
-  x_train, y_train, 
-  epochs = 100, batch_size = 16, 
-  validation_data = list(x_val, y_val)
+  train_data, train_target, 
+  epochs = 20, batch_size = 16, 
+  validation_data = list(test_data, test_target)
 )
 
+# Part 5
 # Evaluate the models on the test set
-score_2_layers <- model_2_layers %>% evaluate(test_data, test_labels, verbose = 0)
-score_6_layers <- model_6_layers %>% evaluate(test_data, test_labels, verbose = 0)
+score_2_layers <- model_2_layers %>% 
+  evaluate(test_data, test_target, verbose = 0)
+score_6_layers <- model_6_layers %>% 
+  evaluate(test_data, test_target, verbose = 0)
 
+# Part 6
 # Prepare data for plotting
 plot_data <- data.frame(
-  epoch = rep(1:100, 2),
-  loss = c(history_2_layers$metrics$loss, history_6_layers$metrics$loss),
-  val_loss = c(history_2_layers$metrics$val_loss, history_6_layers$metrics$val_loss),
-  model = rep(c("2 Layers", "6 Layers"), each = 100)
-)
+  true_target = test_target,
+  pred_2_target = model_2_layers %>% predict(test_data),
+  pred_6_target = model_6_layers %>% predict(test_data)
+) %>% pivot_longer(-true_target, 
+                   names_to = "Model",
+                   values_to = "y_pred")
 
 # Plotting
-ggplot(plot_data, aes(x = epoch, y = val_loss, color = model)) +
-  geom_line() +
-  labs(title = "Validation Loss over Epochs", x = "Epoch", y = "Validation Loss") +
-  theme_minimal()
+ggplot(plot_data, aes(x = true_target, y = y_pred, color = Model)) +
+  geom_point() +
+  labs(title = "Predicted vs true values on test set", 
+       x = "y", y = "y-pred") +
+  geom_abline(slope = 1, intercept = 0)
+# Interestingly one very pad prediction
 ```
 </details>
 
 <details>
   <summary>Task set 2</summary>
-  ```{r ts2}
-horseshoe = read.csv('../data/horseshoe.csv')
-str(horseshoe)
+```{r ts2, eval = FALSE}
+# Part 1
+library(keras)
 
-horseshoe$color_fac = factor(horseshoe$color,
-                             labels = c('light medium', 'medium', 
-                                        'dark medium', 'dark'))
-horseshoe$spine_fac = factor(horseshoe$spine,
-                             labels = c('both good', 
-                                        'one worn or broken', 
-                                        'both worn or broken'))
-                                        
-pairs(horseshoe) # Strong relationship between width and weight
-# Response variable is satell so perhaps explore more
-boxplot(satell ~ spine_fac, data = horseshoe)
-boxplot(satell ~ color_fac, data = horseshoe)
+# Load CIFAR-100 dataset
+cifar100_data <- dataset_cifar100()
 
-horseshoe$satell_bin = as.integer(horseshoe$satell > 0)
-boxplot(width ~ satell_bin, data = horseshoe) # Higher width with satell > 0
+# Split the data into training and test sets
+train_data <- cifar100_data$train
+test_data <- cifar100_data$test
 
-logistic_mod = glm(satell_bin ~ width, data = horseshoe,
-                   family = 'binomial')
-summary(logistic_mod)
+# Inspect the structure of the dataset
+str(train_data) # 50k by 32 by 32 by 3
+str(test_data) # 10k by 1 (or 10k by 10)
 
-with(horseshoe, plot(width, satell_bin))
-points(horseshoe$width, logistic_mod$fitted.values, col = 'red')
-# Must be able to make this plot look nicer!
+# Part 2
+for (i in 1:10) {
+  img <- train_data$x[i,,,] / 255
+  img <- aperm(img, c(2, 1, 3)) # Re-arranging dimensions
+  raster_matrix <- matrix(rgb(img[,,1], img[,,2], img[,,3]), nrow=32)
+  raster_obj <- t(as.raster(raster_matrix))
+  plot(0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+  rasterImage(raster_obj, 0, 0, 1, 1)
+}
 
-logistic_mod_2 = glm(satell_bin ~ width + color_fac + spine_fac, data = horseshoe,
-                   family = 'binomial')
-summary(logistic_mod_2)
-AIC(logistic_mod, logistic_mod_2) # New model not any better
-# Many more modelling options to try here
-  ```
+# Part 3
+# Reshape and normalize the data
+# train_x <- array_reshape(train_data$x, c(dim(train_data$x)[1], 32, 32, 3)) / 255
+# test_x <- array_reshape(test_data$x, c(dim(test_data$x)[1], 32, 32, 3)) / 255
+train_x <- train_data$x / 255
+test_x <- test_data$x / 255
+
+# Convert labels to categorical
+train_y <- to_categorical(train_data$y, 100)
+test_y <- to_categorical(test_data$y, 100)
+
+# Part 4
+model <- keras_model_sequential() %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = 'relu', 
+                input_shape = c(32, 32, 3)) %>%
+  layer_max_pooling_2d(pool_size = c(2,2)) %>%
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') %>%
+  layer_max_pooling_2d(pool_size = c(2,2)) %>%
+  layer_flatten() %>%
+  layer_dense(units = 64, activation = 'relu') %>%
+  layer_dense(units = 100, activation = 'softmax')
+
+# 5. Compile the model
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = keras$optimizers$legacy$RMSprop(learning_rate = 0.0001),
+  metrics = c('accuracy')
+)
+
+# Fit the model to the training data - might be quite slow
+history <- model %>% fit(
+  train_x, train_y,
+  epochs = 10,
+  batch_size = 32,
+  validation_split = 0.2
+)
+
+# 6. Mis-classification table
+# Predict classes for the test set
+predictions <- model %>% predict(test_x)
+
+# Convert predictions and actual labels to data frame
+results_df <- data.frame(
+  Actual = apply(test_y, 1, which.max) - 1, # Adjusting indices
+  Predicted = apply(predictions, 1, which.max)
+)
+
+# Create a misclassification table
+misclass_table <- table(results_df$Actual, results_df$Predicted)
+
+# Print the misclassification table
+print(misclass_table)
+
+# Optional: Analyze the misclassification table
+# This can involve calculating the most frequently misclassified classes
+
+```
 </details>
 
-<details>
-  <summary>Task set 3</summary>
-  ```{r ts3}
-pois_mod = glm(satell ~ width, data = horseshoe, family = poisson)
-summary(pois_mod)
-
-# Example of a qq-plot for a Poisson distribution - bit of a hack!
-# qqrplot comes from the countreg package
-source('https://raw.githubusercontent.com/rforge/countreg/master/pkg/R/qqrplot.R')
-source('https://raw.githubusercontent.com/rforge/countreg/master/pkg/R/qresiduals.R')
-qqrplot(pois_mod, 
-        main = "Poisson")
-        
-pois_mod_2 = glm(satell ~ width + color_fac + spine_fac + weight, data = horseshoe, family = poisson)
-summary(pois_mod_2)
-
-library(MASS)
-nb_mod = glm.nb(satell ~ width + color_fac + spine_fac + weight, data = horseshoe)
-summary(nb_mod)
-AIC(pois_mod, pois_mod_2, nb_mod) # NegBin model way 'better' in terms of AIC
-# Plot of fitted values
-with(horseshoe, plot(width, satell))
-points(horseshoe$width, nb_mod$fitted.values, col = 'red')
-# Width not the only variable we could plot against (try e.g. color_fac or others)
-
-# QQ-plot for negative binomial
-qqrplot(nb_mod, 
-        main = "Negative Binomial")
-# Compare with the Poisson fit
-qqrplot(pois_mod_2, 
-        main = "Poisson")
-  ```
-</details>
 
 
