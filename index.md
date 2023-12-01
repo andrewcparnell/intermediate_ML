@@ -43,7 +43,7 @@ Time  | Class
 10:30-10:45 | Break
 10:45-11:45 | [Clustering](https://andrewcparnell.github.io/intermediate_ML/slides/class_6_clustering.pdf) 
 11:30-11:45 | Break
-12:00-13:00 | Guided practical: fitting UMAP [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_umap.R), $t$-SNE [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_tsne.R), Mclust [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_mclust.R), and Spectral clustering [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_spectral.R)
+12:00-13:00 | Guided practical: fitting UMAP [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_umap.R), t-SNE [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_tsne.R), Mclust [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_mclust.R), and Spectral clustering [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_spectral.R)
 13:00-14:00 | Lunch
 14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html)
 
