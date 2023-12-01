@@ -53,7 +53,7 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:30-10:30 | [Anomaly Detection](https://andrewcparnell.github.io/intermediate_ML/slides/link.pdf) 
 10:30-10:45 | Break
-10:45-11:45 | Guided practical: [`Anomalize`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_anomalize.R) [`tsoutliers`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_tsoutliers.R) [`stray`](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_stray.R)
+10:45-11:45 | Guided practical: [(Anomalize)](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_anomalize.R) [(tsoutliers)](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_tsoutliers.R) [(stray)](https://andrewcparnell.github.io/intermediate_ML/scripts/cran_downloads_stray.R)
 11:30-11:45 | Break
 12:00-13:00 | Course wrap up, Q&A, open session
 13:00-14:00 | Lunch
