@@ -31,17 +31,18 @@ install_keras()
 install_tensorflow()
 ```
 
-There is a nice introduction for installing `keras` and checking it works at https://cran.r-project.org/web/packages/keras/vignettes/. In particular copying the code and running the basic model there will help diagnose any problems with your installation
+There is a nice introduction for installing `keras` and checking it works at (https://cran.r-project.org/web/packages/keras/vignettes/). In particular copying the code and running the basic model there will help diagnose any problems with your installation
 
 Now install the other packages we need:
 
 ```{r,eval=FALSE}
-install.packages(c('nnet','ggplot2','BART','BASS','BayesGPfit','mclust','kernlab','pdfCluster','umap','fpc','tfdatasets','text2vec', 'anomalize', 'tsoutliers', 'stray'))
+install.packages(c('nnet','ggplot2','BART','BASS','BayesGPfit',
+'mclust','kernlab','pdfCluster','umap','fpc','tfdatasets','text2vec', 'anomalize', 'tsoutliers', 'stray'))
 ```
 
 ### Cloud version
 
-If you are struggling to install keras or you have a computer that does not allow you administrator access you can try to install keras and the other packages in the cloud version of Rstudio at https://posit.cloud. You need to create a (paid unfortunately) account and after that you can install keras with:
+If you are struggling to install keras or you have a computer that does not allow you administrator access you can try to install keras and the other packages in the cloud version of Rstudio at (https://posit.cloud). You need to create a (paid unfortunately) account and after that you can install keras with:
 
 ```{r,eval=FALSE}
 install.packages('keras')
