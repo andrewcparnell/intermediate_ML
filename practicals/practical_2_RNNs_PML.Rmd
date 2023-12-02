@@ -53,7 +53,7 @@ In this set of questions we will use the R packages `BART`, `BayesGPfit`, and `B
 
 2. Prepare the data for modelling by converting the factors into numeric variables (use `mutate_if` - note you could also turn these into one hot encoded), and scale all variables. You may like to apply a transformation (such as log) to the price as it is very skewed. Split the data into training and test sets. These models can be quite slow on certain computers so I would suggest just using 10% as the training proportion for these exercises.
 
-3 Fit BART, BGP, and BASS models to the training data using the appropriate packages with `price` as the target variable. Include code to predict the prices on the test set using the fitted model.
+3. Fit BART, BGP, and BASS models to the training data using the appropriate packages with `price` as the target variable. Include code to predict the prices on the test set using the fitted model.
 
 4. Compare the performance of the BART, BGP, and BASS models using the Root Mean Squared Error (RMSE) on the test set. Which model performs best? Create a plot using `ggplot2` of the predicted values vs the true values for the 3 different models.
 
@@ -241,6 +241,10 @@ ggplot(plot_data_long,
   theme_minimal()
 # For me all very similar - but very good
 ```
+</details>
+
+<details>
+  <summary>Task set 2</summary>
 ```{r ts2, eval = FALSE}
 # Load necessary libraries
 library(tidyverse)
@@ -337,6 +341,9 @@ mean(bart_df$outside) # Too high - not a well calibrated model
 
 ```
 </details>
+
+
+
 
 
 

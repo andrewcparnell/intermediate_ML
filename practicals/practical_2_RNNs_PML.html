@@ -1567,12 +1567,10 @@ apply a transformation (such as log) to the price as it is very skewed.
 Split the data into training and test sets. These models can be quite
 slow on certain computers so I would suggest just using 10% as the
 training proportion for these exercises.</p></li>
-</ol>
-<p>3 Fit BART, BGP, and BASS models to the training data using the
+<li><p>Fit BART, BGP, and BASS models to the training data using the
 appropriate packages with <code>price</code> as the target variable.
 Include code to predict the prices on the test set using the fitted
-model.</p>
-<ol start="4" style="list-style-type: decimal">
+model.</p></li>
 <li><p>Compare the performance of the BART, BGP, and BASS models using
 the Root Mean Squared Error (RMSE) on the test set. Which model performs
 best? Create a plot using <code>ggplot2</code> of the predicted values
@@ -1785,6 +1783,11 @@ ggplot(plot_data_long,
        colour = &quot;Legend&quot;) +
   theme_minimal()
 # For me all very similar - but very good</code></pre>
+</details>
+<details>
+<summary>
+Task set 2
+</summary>
 <pre class="r"><code># Load necessary libraries
 library(tidyverse)
 library(BART)
