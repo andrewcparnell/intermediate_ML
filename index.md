@@ -33,7 +33,7 @@ Time  | Class
 11:45-12:00 | Break
 12:00-13:00 | Guided practical: fitting RNNs [(air passengers - RNN)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_rnn.R) [(air passengers - LSTM)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_lstm.R) [(air passengers - GRU)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_keras_GRU.R) [(air passengers - no packages)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_nopackages_rnn.R) [(earthquakes - lstm - classification)](https://andrewcparnell.github.io/intermediate_ML/scripts/airpassengers_nopackages_rnn.R) and probabilistic models [(mtcars - BART)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bart.R) [(mtcars - GP)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bayesgpfit.R) [(mtcars - bass)](https://andrewcparnell.github.io/intermediate_ML/scripts/mtcars_bass.R) 
 13:00-14:00 | Lunch
-14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html) 
+14:00-16:00 | Self-guided practical: fittings RNNs and PML [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/practical_2_RNNs_PML.html) 
 
 ## Day 3: Unsupervised Learning - Dimension Reduction and Clustering
 

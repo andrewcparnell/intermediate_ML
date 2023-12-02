@@ -1,0 +1,342 @@
+---
+title: 'Day 2: Self-guided practical - RNNs and probabilistic ML'
+author: "Andrew Parnell"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+rm(list=ls()) # Clear the workspace
+knitr::opts_chunk$set(echo = TRUE)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01, las=1)
+options(width = 50)
+pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
+lapply(pkgs, library, character.only = TRUE)
+
+```
+
+## Introduction
+
+In this practical we'll start by exploring the fit of RNNs, LSTMs, and GRUs. Then we'll move on to fitting some BART, BGP, and BASS models. All of these were covered in today's lecture notes. As yesterday, our main goal is to understand how we set up the data for each of these models, how we run them (and the arguments included) and being interpret the output. In time series models this usually means being able to produce forecasts. In probabilistic machine learning this is usually not only looking at goodness of fit but also looking at how well calibrated the predictions are when they the uncertainty is included.
+
+***
+
+
+## Task set 1: Comparing types of RNN
+
+We are going to forecast some electricity demand using the `tsibbledata` package to source some data sets. First create a new script and load in the `tidyverse` and `keras` packages.
+
+1. Load the `vic_elec` dataset from the `tsibbledata` package. Explore the dataset by summarizing its structure and key characteristics. Provide commands to display the first few rows of the dataset and a basic summary of its structure. 
+
+2. Using `ggplot2`, create some time series plots of the electricity demand and temperature from the vic_elec dataset. The script should include a line plot for electricity demand and a separate line plot for temperature, each plotted against time.
+
+3. Prepare the `vic_elec` data for input into an RNN model. We will use the `Demand` variable as the one we're trying to predict. Your script should involve normalising the variable (i.e. making its maximum value 1 and minimum value 0), splitting it into training (80%) and testing sets (20%) using a look back value of 50, and reshaping it into a format suitable for RNNs. 
+
+4. Fit a basic RNN model to the training data using Keras in R. Include in the script the creation of a sequential model with RNN layers, compilation, and fitting the model on the training data. You can use a structure such as that in the `airpassengers_keras_rnn.R` file, or you can change it to make it simpler/richer. If you set the batch size or epochs too high it might be too slow so adjust these (or alternatively use a small portion of the data) so that each model fits in a minute or so.
+
+5. Now fit GRU and LSTM models to the training data using similar steps as the RNN model. The R script should include the creation, compilation, and fitting of both the GRU and LSTM models. Ensure to adjust the model architecture appropriately for the GRU and LSTM.
+
+6. Evaluate the performance of the RNN, GRU, and LSTM models on the test data. Create code that uses the trained models to make predictions on the test data and calculates the root mean squared error (RMSE) for each model. Compare the performance of the three models based on their RMSE. Produce some ggplots of the fitted values for the three models for the test data over time.
+
+## Task set 2: Probabilistic machine learning
+
+In this set of questions we will use the R packages `BART`, `BayesGPfit`, and `BASS` probabilistic ML models to the `diamonds` dataset from the `ggplot2` package to predict the variable `price`. 
+
+1. Load the dataset in and conduct an exploratory data analysis including performing some summary statistics and creating some basic `ggplot2` plots. Focus on understanding the distribution of the target variable `price` and the relationships between 'price' and other features, such as `carat`, `cut`, `color`, and `clarity`. 
+
+2. Prepare the data for modelling by converting the factors into numeric variables (use `mutate_if` - note you could also turn these into one hot encoded), and scale all variables. You may like to apply a transformation (such as log) to the price as it is very skewed. Split the data into training and test sets. These models can be quite slow on certain computers so I would suggest just using 10% as the training proportion for these exercises.
+
+3 Fit BART, BGP, and BASS models to the training data using the appropriate packages with `price` as the target variable. Include code to predict the prices on the test set using the fitted model.
+
+4. Compare the performance of the BART, BGP, and BASS models using the Root Mean Squared Error (RMSE) on the test set. Which model performs best? Create a plot using `ggplot2` of the predicted values vs the true values for the 3 different models.
+
+5. For BART (and BASS) you can extract the full posterior distribution of predictions. Create a 50% interval for each row in the test set and produce a plot of true vs predicted values. Add a candlestick plot (use e.g. `geom_errorbar`) to show the uncertainty and see if the model is calibrated. (If the model is well calibrated, approximately 50% of the candlesticks should cross the x = y line).
+ 
+## Task set 3: Extra data sets
+
+There are plenty of other interesting data sets in the `tsibbledata` package you could use to fit some RNN models. Similarly there is a nice package called `mlbench` which you could fit some more probabilistic ML models. Most of the real data sets in `mlbench` are classification models but there are some interesting simulated models that are worth comparing these models with too. 
+
+## Extra questions (if time)
+
+1. The `vic_elec` data have both demand and temperature which are strongly related. If you want to try a more advanced model you could (a) try a model where we use the ratio `(Demand / Temperature)` to capture the relationship between them, or (b) use both temperature and previous demand as inputs to the model, with only Demand as the response.  
+
+2. In task set 2 we replaced the factor variables with numeric which is not an optimal strategy. Instead you could use `model.matrix` to create a proper set of dummy variables (for factors R uses x, x^2, x^3, etc by default) and put those in the model instead. This is likely to perform better, and you could check using one or more of the modelling approaches.
+
+## Answers
+
+<details>
+  <summary>Task set 1</summary>
+```{r ts1, eval = FALSE}
+library(tsibbledata)
+library(keras)
+library(tidyverse)
+
+# Part 1
+
+# Load the vic_elec dataset
+data("vic_elec")
+
+# Display the first few rows
+head(vic_elec)
+
+# Summary of the dataset structure
+glimpse(vic_elec)
+
+# Part 2
+# Plot for Electricity Demand
+ggplot(vic_elec, aes(x = Time, y = Demand)) + 
+    geom_line() + 
+    labs(title = "Electricity Demand over Time", 
+         x = "Time", y = "Demand")
+
+# Plot for Temperature
+ggplot(vic_elec, aes(x = Time, y = Temperature)) + 
+    geom_line(color = "red") + 
+    labs(title = "Temperature over Time", 
+         x = "Time", y = "Temperature")
+
+# Part 3
+# Normalise the data - make it between 0 and 1
+max_demand <- max(vic_elec$Demand) # min value already 0
+vic_elec$Demand <- vic_elec$Demand / max_demand
+
+look_back <- 100
+dataX_list <- vector("list", length = length(vic_elec$Demand) - look_back)
+dataY_list <- vector("list", length = length(vic_elec$Demand) - look_back)
+
+for (i in 1:(length(vic_elec$Demand) - look_back)) {
+  dataX_list[[i]] <- vic_elec$Demand[i:(i + look_back - 1)]
+  dataY_list[[i]] <- vic_elec$Demand[i + look_back]
+}
+
+# Combine the list elements into matrices/vectors
+dataX <- do.call(rbind, dataX_list)
+dataY <- unlist(dataY_list)
+
+# Splitting into train and test
+split_idx <- round(0.8 * nrow(dataX))
+X_train <- array(dataX[1:split_idx, ], dim = c(split_idx, look_back, 1))
+y_train <- dataY[1:split_idx]
+X_test <- array(dataX[(split_idx+1):nrow(dataX), ], 
+                dim = c(nrow(dataX) - split_idx, look_back, 1))
+y_test <- dataY[(split_idx+1):length(dataY)]
+
+# Step 4
+# Create RNN model
+model_rnn <- keras_model_sequential() %>%
+  layer_simple_rnn(units = 50, input_shape = c(look_back, 1)) %>%
+  layer_dense(units = 1)
+
+# Compile the model
+model_rnn %>% compile(
+  loss = 'mean_squared_error',
+  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.001)
+)
+
+# Fit the model
+model_rnn %>% fit(
+  X_train, 
+  y_train, 
+  epochs = 20, 
+  batch_size = 72, 
+  validation_data = list(X_test, y_test)
+)
+
+# Step 5
+# Create GRU model
+model_gru <- keras_model_sequential() %>%
+  layer_gru(units = 50, input_shape = c(look_back, 1)) %>%
+  layer_dense(units = 1)
+
+# Compile GRU model
+model_gru %>% compile(
+  loss = 'mean_squared_error',
+  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.001)
+)
+
+# Fit GRU model
+model_gru %>% fit(
+  X_train, 
+  y_train, 
+  epochs = 20, 
+  batch_size = 72, 
+  validation_data = list(X_test, y_test)
+)
+
+# Create LSTM model
+model_lstm <- keras_model_sequential() %>%
+  layer_lstm(units = 50, input_shape = c(look_back, 1)) %>%
+  layer_dense(units = 1)
+
+# Compile LSTM model
+model_lstm %>% compile(
+  loss = 'mean_squared_error',
+  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.001)
+)
+
+# Fit LSTM model
+model_lstm %>% fit(
+  X_train, 
+  y_train, 
+  epochs = 20, 
+  batch_size = 72, 
+  validation_data = list(X_test, y_test)
+)
+
+# Step 6
+# Predictions
+predict_rnn <- model_rnn %>% predict(X_test)
+predict_gru <- model_gru %>% predict(X_test)
+predict_lstm <- model_lstm %>% predict(X_test)
+
+# Calculate RMSE for each model
+rmse <- function(obs, pred) return(sqrt(mean((obs - pred)^2)))
+rmse(y_test, predict_rnn) # Smallest (for me)
+rmse(y_test, predict_gru) 
+rmse(y_test, predict_lstm)
+
+# Finally create a nice plot
+test_indices <- (split_idx+1):length(dataY)
+plot_data <- data.frame(
+  Time = vic_elec$Time[test_indices],
+  Actual = y_test,
+  RNN = predict_rnn,
+  GRU = predict_gru,
+  LSTM = predict_lstm
+)
+
+# Gather the predictions into a long format
+plot_data_long <- plot_data %>%
+  pivot_longer(cols = c("RNN", "GRU", "LSTM"), 
+               names_to = "Model", 
+               values_to = "Predicted")
+
+# Create the ggplot
+ggplot(plot_data_long, 
+       aes(x = Time, y = Predicted, colour = Model)) +
+  geom_line() +
+  geom_line(aes(y = Actual, colour = "Actual", 
+                ), alpha = 0.6) +
+  labs(title = "Model Performance on Test Data",
+       x = "Time",
+       y = "Demand",
+       colour = "Legend") +
+  theme_minimal()
+
+ggplot(plot_data_long, 
+       aes(x = Actual, y = Predicted, colour = Model)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(intercept = 0, slope = 1) + 
+  labs(title = "Model Performance on Test Data",
+       x = "Actual",
+       y = "Predicted",
+       colour = "Legend") +
+  theme_minimal()
+# For me all very similar - but very good
+```
+```{r ts2, eval = FALSE}
+# Load necessary libraries
+library(tidyverse)
+library(BART)
+library(BayesGPfit)
+library(BASS)
+
+# 1. Data Loading and Exploration
+data("diamonds", package = "ggplot2")
+glimpse(diamonds)
+# Some example plots, but anything is appropriate
+ggplot(diamonds, aes(x = carat, y = price)) + 
+  geom_point() + theme_minimal()
+ggplot(diamonds, aes(x = log(price))) + 
+  geom_histogram(bins = 30) + theme_minimal()
+
+# 2. Data Preprocessing
+set.seed(123) # For reproducibility
+
+# Convert to data frame
+scale_fun <- function(x) (x - mean(x)) / sd(x)
+diamonds_use <- diamonds %>% 
+  mutate(price = log(price)) %>% 
+  mutate_if(is.factor, as.numeric) %>% 
+  mutate_if(is.numeric, scale_fun) %>% 
+  as.data.frame()
+index <- sample(1:nrow(diamonds), 0.1 * nrow(diamonds))
+X_train <- diamonds_use[index, -which(names(diamonds) == "price")]
+y_train <- diamonds_use$price[index]
+X_test <- diamonds_use[-index, -which(names(diamonds) == "price")]
+y_test <- diamonds_use$price[-index]
+
+# 3. Fitting a BART Model
+bart_model <- wbart(x.train = X_train,
+                    y.train = y_train,
+                    x.test = X_test)
+bart_posterior <- predict(bart_model, X_test)
+bart_predictions <- bart_model$yhat.test.mean
+
+# 4. Fitting a BGP Model
+bgp_model <- GP.Bayes.fit(y_train, 
+                          X_train, 
+                          poly_degree = 5L, 
+                          a = 0.001,
+                          b = 2,
+                          progress_bar = TRUE)
+bgp_posterior <- GP.predict(bgp_model,
+                              X_test,
+                              CI = TRUE)
+bgp_predictions <- bgp_posterior$mean$f
+
+# 5. Fitting a BASS Model
+bass_model <- bass(X_train, y_train)
+bass_posterior <- predict(bass_model, 
+                            newdata = X_test)
+bass_predictions <- colMeans(bass_predictions)
+
+# 6. Model Evaluation and Comparison
+bart_rmse <- sqrt(mean((bart_predictions - y_test)^2)) # BART wins!
+bgp_rmse <- sqrt(mean((bgp_predictions - y_test)^2))
+bass_rmse <- sqrt(mean((bass_predictions - y_test)^2))
+
+# Plotting predictions against true values
+ggplot() +
+  geom_point(aes(x = y_test, y = bgp_predictions), 
+             colour = "red", alpha = 0.5) +
+  geom_point(aes(x = y_test, y = bart_predictions), 
+             colour = "blue", alpha = 0.5) +
+  # geom_point(aes(x = y_test, y = bass_predictions),
+  #            colour = "green", alpha = 0.5) +
+  # The lines above are commented out because bass performed so badly
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  labs(title = "Model Predictions vs Actual Prices",
+       x = "Actual Price", y = "Predicted Price") +
+  theme_minimal()
+
+# Create a new data frame to look at calibration
+bart_df <- data.frame(
+  y_test = y_test,
+  bart_pred_25 = apply(bart_posterior, 2, quantile, 0.25),
+  bart_pred_50 = apply(bart_posterior, 2, quantile, 0.5),
+  bart_pred_75 = apply(bart_posterior, 2, quantile, 0.75)
+)
+bart_df$outside = y_test < bart_df$bart_pred_25 | 
+  y_test > bart_df$bart_pred_75
+ggplot(bart_df, aes(x = y_test, y = bart_pred_50,
+                             colour = outside)) + 
+  geom_abline(intercept = 0, slope = 1) + 
+  geom_errorbar(aes(ymin = bart_pred_25, ymax = bart_pred_75),
+                alpha = 0.5) + 
+  theme_minimal()
+mean(bart_df$outside) # Too high - not a well calibrated model
+# Too small a training set?
+
+```
+</details>
+
+
+
