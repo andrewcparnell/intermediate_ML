@@ -35,9 +35,10 @@ There is a nice introduction for installing `keras` and checking it works at (ht
 
 Now install the other packages we need:
 
-```{r,eval=FALSE}
-install.packages(c('nnet','ggplot2','BART','BASS','BayesGPfit',
-'mclust','kernlab','pdfCluster','umap','fpc','tfdatasets','text2vec', 'anomalize', 'tsoutliers', 'stray', 'mlbench', 'tsibbledata'))
+```{r, eval=FALSE}
+install.packages(c('tidyverse','nnet','BART','BASS','BayesGPfit','mclust',
+'kernlab','pdfCluster','umap','fpc','tfdatasets','text2vec', 'anomalize', 
+'tsoutliers', 'stray', 'mlbench', 'tsibbledata'))
 ```
 
 ### Cloud version
