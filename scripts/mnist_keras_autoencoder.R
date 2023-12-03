@@ -8,17 +8,24 @@ mnist <- dataset_mnist()
 x_train <- mnist$train$x
 x_test <- mnist$test$x
 
+# Plot an image 
+img <- matrix(x_test[1,], nrow = 28)
+image(img[,ncol(img):1], axes = FALSE, 
+      main = paste("Label:", mnist$test$y[i]))
+
 # Preprocess Data
 x_train <- array_reshape(x_train / 255, c(nrow(x_train), 784))
 x_test <- array_reshape(x_test / 255, c(nrow(x_test), 784))
 
 # Define Autoencoder Model
 encoding_dim <- 32
-input_img <- layer_input(shape = c(784))
+input_img <- layer_input(shape = 784)
 
+# encoded takes the raw image and slims it down
 encoded <- input_img %>%
   layer_dense(units = encoding_dim, activation = 'relu')
 
+# decoded takes the encoded and turns it back into an image
 decoded <- encoded %>%
   layer_dense(units = 784, activation = 'sigmoid')
 
@@ -54,3 +61,15 @@ ggplot(encoded_df, aes(x = V1, y = V2, color = as.factor(digit))) +
   labs(title = "2D Visualization of Encoded Space",
        x = paste("Dimension",o[1]),
        y = paste("Dimension",o[2]))
+
+# Plot a reconstructed image
+# Now plot
+img <- matrix(x_test[1,], nrow = 28)
+image(img[,ncol(img):1], axes = FALSE, 
+      main = paste("Label:", mnist$test$y[i]))
+
+decoded_images <- predict(autoencoder, x_test)
+img <- matrix(decoded_images[1,], nrow = 28)
+image(img[,ncol(img):1], axes = FALSE, 
+      main = paste("Label:", mnist$test$y[i]))
+# Not too bad!

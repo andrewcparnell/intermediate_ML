@@ -22,7 +22,7 @@ Academics and post-graduate students working on projects where advanced machine 
 
 A basic understanding of statistical concepts such as linear and logistic regression models. Basic machine learning techniques such as Random Forests, Gradient Boosting, k-NN, SVMs. 
 
-Good familiarity with R. Ability to import/export data, manipulate data frames, fit basic machine learning models (listed above) and generate simple exploratory and diagnostic plots. 
+Good familiarity with R. Ability to import/export data, manipulate data frames, fit basic machine learning models (listed above) and generate simple exploratory and diagnostic plots using ggplot2. 
 
 ## Start the course
 

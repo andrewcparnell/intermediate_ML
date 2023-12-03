@@ -1,0 +1,434 @@
+---
+title: 'Day 3: Self-guided practical - Unsupervised learning'
+author: "Andrew Parnell"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+  pdf_document: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+rm(list=ls()) # Clear the workspace
+knitr::opts_chunk$set(echo = TRUE)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01, las=1)
+options(width = 50)
+pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
+lapply(pkgs, library, character.only = TRUE)
+
+```
+
+## Introduction
+
+In this practical we'll explore the dimension reduction techniques PCA, UMAP, and $t$-SNE on a new data set, looking at how the latent dimensions change when we adjust the parameters of the models. Then we will look at the clustering approaches we met earlier, namely spectral and model-based clustering. Finally we will play with some autoencoders. 
+
+***
+
+
+## Task set 1: Dimension reduction and clustering
+
+We are going to use the `wine` dataset from the `pdfCluster` package to perform our analysis on.
+
+1. Begin by loading the dataset in. Examine the structure of the data, including the number of features and samples. Provide summary statistics and plot histograms for some of the key features using ggplot2 to understand the distribution of the data. Run a PCA and produce a plot of the first two components. Use the variable `Type` to see whether the dimensions help separate out the 3 types. 
+
+2. Apply $t$-SNE using the `Rtsne` package (remove `Type` and keep only the continuous variables). Start with default parameters, and create a 2D plot of the resulting lower-dimensional data using ggplot2 (again using `Type` to see how well they match). See if you can interpret how $t$-SNE displays the wine samples.
+
+3. Now use the `umap` package to do the same thing. Produce the visualisation of the two reduced dimensions and compare the UMAP projection to the $t$-SNE result from the previous question. 
+
+4. Perform spectral clustering on the dataset using the `kernlab` package. Experiment with different numbers of clusters. Visualise the clusters in the reduced dimension space ($t$-SNE or UMAP) using the model you prefer best. Produce a cross-tabulation of the cluster estimates against the `Type` variable. Do the clusters match the wine types?
+
+5. Now try a model-based clustering using the `mclust` package. Determine the optimal number of clusters based on the Bayesian Information Criterion (BIC) and show the clustering results on the reduced dimension data again. See if you can produce a plot that compares the spectral and mclust versions of clustering.
+
+6. Now return to $t$-SNE and UMAP and explore the effect of changing the perplexity and learning rate (in $t$-SNE), and different distance metrics (in UMAP). For UMAP see the web page "https://cran.r-project.org/web/packages/umap/vignettes/umap.html#tuning" for how to change the configuration. Generate plots for each of the values you chose and see if you can find values that separate out the wine types better. 
+
+## Task set 2: Autoencoders
+
+In this task we're going to apply the method of autoencoders to the `cifar10` data set which we have already met in previous classes. The difference with this data set is that we are running the autoencoder on colour pictures (albeit at a low resolution). 
+ 
+1. Load the CIFAR-10 dataset using the `keras` R package. Explore the dataset by printing the dimensions of the training and test sets. Standardise all the image values by dividing by 255 so that they are all in the range (0, 1). Use the code from previous classes to plot some of the images and re-familiarise yourself with the data.
+
+2. Construct a basic autoencoder with a single hidden layer as the encoder and decoder. The encoder should use:
+```
+encoded <- input %>% 
+  layer_flatten() %>%
+  layer_dense(units = encoding_dim, activation = 'relu')
+```
+and the decoder
+```
+decoded <- encoded %>%
+  layer_dense(units = 32 * 32 * 3, activation = 'sigmoid') %>%
+  layer_reshape(target_shape = c(32, 32, 3))
+```
+Think about why these types of layers and activation functions are used. Train the model using the training set and evaluate it using the test set. What is the reconstruction error on the test set (use RMSE)? Plot some of the reconstructed images and compare them to the input images.
+
+3. Modify the previous autoencoder to use convolutional layers. Use `Conv2D` and `MaxPooling2D` for the encoder, and `Conv2DTranspose` for the decoder. Assess the performance of this model on the test set. How does it compare to the basic autoencoder in terms of reconstruction error?
+ 
+4. Experiment with different architectures and hyperparameters (e.g., number of layers, number of units in each layer, types of layers, activation functions) for the autoencoder. How do these changes affect the model's performance and the quality of the reconstructed images?
+ 
+## Task set 3: Other data sets
+
+We have now met plenty of other data sets on which we could perform dimension reduction, clustering, or autoencoding. See if you can find some particularly interesting ones that I can use in future versions of this course!
+
+## Extra questions (if time)
+
+1. The R package `plotly` allows for some much fancier plotting than `ggplot2` though it's not always quite as elegant. Have a look at the `scatter3d` option to see if you can plot some 3D dimension reduction approaches. 
+
+2. The idea behind autoencoders is pretty similar to that of other dimension reduction techniques. Why not take the embedded values and compare them to that produced by t-SNE or PCA. Is there anything more insightful about the autoencoder versions?
+
+3. Implement a variational autoencoder (VAE) on the CIFAR-10 dataset. Again, you can use a structure similar to the one in class, or extend to produce a richer model. Train this model and discuss the characteristics of the generated images compared to the basic and convolutional autoencoders. How does the RMSE compare to the basic autoencoder? As above plot some of the reconstructed images and compare them to the input images.
+
+## Answers
+
+<details>
+  <summary>Task set 1</summary>
+```{r ts1, eval = FALSE}
+library(pdfCluster)
+library(tidyverse)
+library(Rtsne)
+library(umap)
+library(kernlab)
+library(mclust)
+library(GGally) # Optional - for ggpairs plot below
+
+# Question 1: Loading and Exploring the Wine Dataset
+data(wine)
+glimpse(wine)
+ggplot(wine, aes(x=wine$Alcohol)) + 
+  geom_histogram(bins = 30)
+ggplot(wine, aes(x=wine$Alcohol)) + 
+  geom_histogram(bins = 30)
+ggpairs(wine,
+        mapping = ggplot2::aes(color = Type))
+
+pca_result <- prcomp(wine[,-1], center = TRUE, scale. = TRUE)
+pca_components <- predict(pca_result)[,1:2]
+
+ggplot(as.data.frame(pca_components), aes(PC1, PC2)) + 
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+# Does a pretty nice job
+
+# Question 2: Dimension Reduction Using t-SNE
+tsne_result <- Rtsne(wine[,-1], dims = 2)
+ggplot(as.data.frame(tsne_result$Y), aes(V1, V2)) + 
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+# Weirdly linear
+
+# Question 3: Dimension Reduction Using UMAP
+umap_result <- umap(wine[,-1])
+ggplot(as.data.frame(umap_result$layout), aes(V1, V2)) +
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+
+# How to compare the two? Could plot the first two components from each
+# against each other?
+data.frame(
+  V1_tSNE = tsne_result$Y[,1],
+  V1_UMAP = umap_result$layout[,1],
+  Type = wine$Type
+) %>% ggplot(aes(x = V1_tSNE, y = V1_UMAP, colour = Type)) + 
+  geom_point() + 
+  theme_minimal()
+# Now sure how to interpret this?!
+# They're obviously not correlated but they're separating Barolo out more than others (at least in the first dim)
+
+# Question 4: Spectral Clustering
+speclust_result <- specc(as.matrix(wine[,-1]), centers = 3)
+ggplot(as.data.frame(umap_result$layout), 
+       aes(V1, V2, color = as.factor(speclust_result@.Data))) + 
+  geom_point() + 
+  labs(color = "Cluster")
+table(wine[,1],speclust_result@.Data)
+# Interpret the above table?
+
+# Question 5: Model-Based Clustering
+mclust_result <- Mclust(wine[,-1])
+plot(mclust_result, what = 'BIC') # All pretty similar
+plot(mclust_result, what = 'classification') # All pretty similar
+ggplot(as.data.frame(tsne_result$Y), 
+       aes(V1, V2, color = as.factor(mclust_result$classification))) +
+  geom_point() + 
+  labs(color = "Cluster")
+table(wine[,1], mclust_result$classification)
+# Wow this is so much better!
+
+# Question 6: Hyperparameter Tuning in t-SNE
+# Example for one set of hyperparameters
+tsne_tuned <- Rtsne(wine[,-1], perplexity = 30, learning_rate = 200)
+ggplot(as.data.frame(tsne_result$Y), aes(V1, V2)) + 
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+# Should run a few and look at the difference between the values
+
+# Question 7: UMAP with Different Distance Metrics
+custom_config <- umap.defaults
+custom_config$metric <- "euclidean"
+umap_euclidean <- umap(wine[,-1], config=custom_config)
+ggplot(as.data.frame(umap_euclidean$layout), aes(V1, V2)) +
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+
+custom_config$metric <- "manhattan"
+umap_manhattan <- umap(wine[,-1], config=custom_config)
+ggplot(as.data.frame(umap_manhattan$layout), aes(V1, V2)) +
+  geom_point(aes(colour = wine$Type)) + 
+  labs(colour = "Type") + 
+  theme_minimal()
+```
+</details>
+
+<details>
+  <summary>Task set 2</summary>
+```{r ts2, eval = FALSE}
+library(keras)
+library(tidyverse)
+
+# Question 1: Data Loading and Initial Exploration
+cifar10 <- dataset_cifar10()
+train_images <- cifar10$train$x/255
+train_labels <- cifar10$train$y
+test_images <- cifar10$test$x/255
+test_labels <- cifar10$test$y
+for (i in 5:5) { # Change loop to show more or fewer images
+  img <- train_images[i,,,]
+  img <- aperm(img, c(2, 1, 3)) # Re-arranging dimensions
+  raster_matrix <- matrix(rgb(img[,,1], img[,,2], img[,,3]), nrow=32)
+  raster_obj <- t(as.raster(raster_matrix))
+  plot(0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+  rasterImage(raster_obj, 0, 0, 1, 1)
+}
+
+# Question 2: Basic Autoencoder
+
+# Input layer
+input <- layer_input(shape = c(32, 32, 3))
+
+# How many dims in the centre?
+encoding_dim <- 256 # Need probably quite a few dimensions here
+
+# Encoder
+encoded <- input %>% 
+  layer_flatten() %>%
+  layer_dense(units = encoding_dim, activation = 'relu')
+
+# Decoder
+decoded <- encoded %>%
+  layer_dense(units = 32 * 32 * 3, activation = 'sigmoid') %>%
+  layer_reshape(target_shape = c(32, 32, 3))
+
+# Set it all up
+autoencoder <- keras_model(input, decoded)
+
+# Compile the model
+autoencoder %>% compile(optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01), 
+                        loss = 'binary_crossentropy')
+
+# Fit the autoencoder
+autoencoder %>% fit(train_images, train_images, 
+                    epochs = 20, batch_size = 256, 
+                    validation_data = list(test_images, test_images))
+
+# See what the reconstructed images look like
+decoded_images <- predict(autoencoder, test_images)
+
+# Test image 5 is a frog
+for (i in 5:5) {
+  img <- decoded_images[i,,,]
+  # img <- test_images[i,,,]
+  img <- aperm(img, c(2, 1, 3)) # Re-arranging dimensions
+  raster_matrix <- matrix(rgb(img[,,1], img[,,2], img[,,3]), nrow=32)
+  raster_obj <- t(as.raster(raster_matrix))
+  plot(0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+  rasterImage(raster_obj, 0, 0, 1, 1)
+} # Not very good! Needs more layers?
+
+# Reconstruction error
+autoencoder %>% evaluate(test_images, test_images)
+# Code always looks wrong to me but remember the input and the output are the same!
+
+# Question 3: Convolutional Autoencoder
+# Caution - this was slow - you might like to remove a layer or two
+# Or change other hyper-parameters
+# You can use any type of layers you want here
+encoding_dim <- 256
+input <- layer_input(shape = c(32, 32, 3))
+encoded <- input %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3, 3), 
+                activation = 'relu', padding = 'same') %>%
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>%
+  layer_conv_2d(filters = 16, kernel_size = c(3, 3), 
+                activation = 'relu', padding = 'same') %>%
+  layer_flatten() %>% 
+  layer_dense(units = encoding_dim, activation = 'relu')
+
+# Now the decoder
+decoded <- encoded %>%
+  layer_dense(units = 16 * 16 * 16) %>%
+  layer_reshape(target_shape = c(16, 16, 16)) %>%
+  layer_conv_2d_transpose(filters = 16, kernel_size = c(3, 3), 
+                          activation = 'relu', padding = 'same', 
+                          strides = c(2, 2)) %>%
+  layer_conv_2d_transpose(filters = 32, kernel_size = c(3, 3), 
+                          activation = 'relu', padding = 'same') %>%
+  layer_conv_2d(filters = 3, kernel_size = c(3, 3), 
+                activation = 'sigmoid', padding = 'same')
+
+# Define the model
+autoencoder_conv <- keras_model(input, decoded)
+
+# Compile
+autoencoder_conv %>% compile(optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01), 
+                             loss = 'binary_crossentropy')
+
+# Fit
+autoencoder_conv %>% fit(train_images, 
+                         train_images, 
+                         epochs = 20, 
+                         batch_size = 256, 
+                         validation_data = list(test_images, test_images))
+
+# Evaluate
+autoencoder_conv %>% 
+  evaluate(test_images, test_images)
+# little bit better than above
+
+# Now plot
+decoded_images_conv <- predict(autoencoder_conv, test_images)
+
+for (i in 5:5) {
+  img <- decoded_images_conv[i,,,]
+  # img <- test_images[i,,,]
+  img <- aperm(img, c(2, 1, 3)) # Re-arranging dimensions
+  raster_matrix <- matrix(rgb(img[,,1], img[,,2], img[,,3]), nrow=32)
+  raster_obj <- t(as.raster(raster_matrix))
+  plot(0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+  rasterImage(raster_obj, 0, 0, 1, 1)
+} # Very slightly better?
+
+# Question 5 
+# Code not included: play around, try different types of embeddings, types of layers, etc
+# See if you can get something that reconstructs the colour images well
+
+# Question 7: Embedding Visualization
+library(umap)
+encoder <- keras_model(input = autoencoder_conv$input, 
+                       output = get_layer(autoencoder_conv, index = 6)$output)
+embeddings <- predict(encoder, test_images)
+umap_embeddings <- umap(embeddings) # Might be slow if you have large embedding dimension
+ggplot(as.data.frame(umap_embeddings$layout), 
+       aes(V1, V2, colour = as.factor(test_labels))) +
+  geom_point() + labs(title = 't-SNE of Embeddings')
+```
+</details>
+
+<details>
+  <summary>Variational autoencoder</summary>
+```{r ets, eval = FALSE}
+  # Question 5: Variational Autoencoder (VAE)
+
+# First need re-shape the training and test data into one
+# long vector of 32 * 32 * 3 = 3072
+batch_size <- 100L
+original_dim <- 32 * 32 * 3
+latent_dim <- 2L
+intermediate_dim <- 256L
+epochs <- 20L
+epsilon_std <- 1.0
+
+x <- layer_input(shape = c(original_dim))
+h <- layer_dense(x, intermediate_dim, activation = "relu")
+z_mean <- layer_dense(h, latent_dim)
+z_log_var <- layer_dense(h, latent_dim)
+
+sampling <- function(arg){
+  z_mean <- arg[, 1:(latent_dim)]
+  z_log_var <- arg[, (latent_dim + 1):(2 * latent_dim)]
+  
+  epsilon <- k_random_normal(
+    shape = c(k_shape(z_mean)[[1]]), 
+    mean=0.,
+    stddev=epsilon_std
+  )
+  
+  z_mean + k_exp(z_log_var/2)*epsilon
+}
+
+# note that "output_shape" isn't necessary with the TensorFlow backend
+z <- layer_concatenate(list(z_mean, z_log_var)) %>% 
+  layer_lambda(sampling)
+
+# we instantiate these layers separately so as to reuse them later
+decoder_h <- layer_dense(units = intermediate_dim, activation = "relu")
+decoder_mean <- layer_dense(units = original_dim, activation = "sigmoid")
+h_decoded <- decoder_h(z)
+x_decoded_mean <- decoder_mean(h_decoded)
+
+# end-to-end autoencoder
+vae <- keras_model(x, x_decoded_mean)
+
+# encoder, from inputs to latent space
+encoder <- keras_model(x, z_mean)
+
+# generator, from latent space to reconstructed inputs
+decoder_input <- layer_input(shape = latent_dim)
+h_decoded_2 <- decoder_h(decoder_input)
+x_decoded_mean_2 <- decoder_mean(h_decoded_2)
+generator <- keras_model(decoder_input, x_decoded_mean_2)
+
+vae_loss <- function(x, x_decoded_mean){
+  xent_loss <- (original_dim/1.0)*loss_binary_crossentropy(x, x_decoded_mean)
+  kl_loss <- -0.5*k_mean(1 + z_log_var - k_square(z_mean) - k_exp(z_log_var), axis = -1L)
+  xent_loss + kl_loss
+}
+
+vae %>% compile(keras$optimizers$legacy$Adam(learning_rate = 0.01),
+                loss = vae_loss)
+
+train_images_new <- array()
+
+array_reshape(train_images, 
+                             c(nrow(train_images), original_dim), 
+                             order = "F")
+test_images_new <- array_reshape(test_images, 
+                            c(nrow(test_images), original_dim), 
+                            order = "F")
+
+vae %>% fit(
+  train_images_new, train_images_new, 
+  shuffle = TRUE, 
+  epochs = epochs, 
+  batch_size = batch_size, 
+  validation_data = list(test_images_new, test_images_new)
+)
+
+decoded_images_vae <- predict(vae, test_images_new)
+
+
+
+for (i in 5:5) {
+  img <- array(decoded_images_vae[i,],
+                       dim = c(32, 32, 3))
+  # img <- test_images[i,,,]
+  img <- aperm(img, c(2, 1, 3)) # Re-arranging dimensions
+  raster_matrix <- matrix(rgb(img[,,1], img[,,2], img[,,3]), nrow=32)
+  raster_obj <- t(as.raster(raster_matrix))
+  plot(0, type = "n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+  rasterImage(raster_obj, 0, 0, 1, 1)
+} # Vert slightly better?
+
+```
+</details>
+
+
+
+
