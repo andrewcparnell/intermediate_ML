@@ -45,7 +45,7 @@ Time  | Class
 11:45-12:00 | Break
 12:00-13:00 | Guided practical: fitting UMAP [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_umap.R), t-SNE [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_tsne.R), Mclust [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_mclust.R), and Spectral clustering [(olive oil)](https://andrewcparnell.github.io/intermediate_ML/scripts/oliveoil_spectral.R)
 13:00-14:00 | Lunch
-14:00-16:00 | Self-guided practical: topic [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/link.html)
+14:00-16:00 | Self-guided practical: dimension reduction and autoencoders [(html)](https://andrewcparnell.github.io/intermediate_ML/practicals/practical_3_unsupervised.html)
 
 ## Day 4: Unsupervised Learning - Anomaly Detection and Course Wrap-up
 
