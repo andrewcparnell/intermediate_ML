@@ -202,7 +202,7 @@ The attention scores signify the importance or relevance of other words in the s
 
 ## Transformers in pictures
 
-\centering\includegraphics[width=0.9\textwidth]{transformer_pic.png}
+\centering\includegraphics[width=0.6\textwidth]{transformer_pic.jpg}
 
 \let\thefootnote\relax\footnotetext{\tiny From https://arxiv.org/abs/1706.03762}
 

@@ -21,17 +21,15 @@ Install the following using the corresponding links
 
 ### Step 2
 
-If you're on a Mac you should first install Python. The easiest way to do this is to first install homebrew at the terminal with:
-
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Then type:
+First you need to install Python. If you're on a Mac I would recommend first installing `homebrew`. See instructions at https://brew.sh. Once installed, go to a Terminal window and type
 
 ```
 brew install python
 ```
+
+If you're on Windows install the most recent version at:https://www.python.org/downloads/windows/.
+
+## Step 3
 
 The main package we will be using is `keras`. You can install it with
 
