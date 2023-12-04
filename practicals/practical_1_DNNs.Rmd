@@ -17,9 +17,6 @@ rm(list=ls()) # Clear the workspace
 knitr::opts_chunk$set(echo = TRUE)
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01, las=1)
 options(width = 50)
-pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
-lapply(pkgs, library, character.only = TRUE)
-
 ```
 
 ## Introduction
@@ -46,7 +43,8 @@ The data set `dataset_boston_housing()` is included in the `keras` R package. St
 Tasks:
 
 1. Load in the data set and check that you understand its structure using `glimpse` or `str`. What are the dimensions of the training and test data sets? 
-2. Scale the training and test set features Create some simple ggplots of the data including a histogram of the target variable (over the training and test sets), and some scatter plots of the relationship between the features and the target variable (you can choose which features to plot)
+
+2. Scale the training and test set features. Create some simple ggplots of the data including a histogram of the target variable (over the training and test sets), and some scatter plots of the relationship between the features and the target variable (you can choose which features to plot)
 
 3. Write a function in R to create a simple neural network model with two hidden dense layers each with 64 hidden units (see the `iris_keras.R` for examples). Try experimenting with different layers. Create two models, one with 2 layers and another with 6 layers. What are the differences in the architecture of these two models? Explore different layer types
 

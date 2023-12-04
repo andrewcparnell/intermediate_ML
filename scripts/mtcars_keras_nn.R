@@ -1,6 +1,6 @@
 # Load necessary libraries
 library(keras)
-library(ggplot2)
+library(tidyverse)
 
 # Set seed for reproducibility
 set.seed(123)
@@ -13,32 +13,29 @@ train_index <- sample(1:nrow(data), 0.7 * nrow(data))
 train_data <- data[train_index, ]
 test_data <- data[-train_index, ]
 
-# Normalizing the data
-normalize <- function(x) {
-  (x - mean(x)) / sd(x)
-}
-
-train_data[, -1] <- as.data.frame(lapply(train_data[, -1], normalize))
-test_data[, -1] <- as.data.frame(lapply(test_data[, -1], normalize))
-
 # Defining the response and covariates for training
-x_train <- as.matrix(train_data[, c("hp", "wt")])
+x_train <- train_data %>% 
+  select("hp", "wt") %>% 
+  scale() %>% 
+  as.matrix()
 y_train <- train_data$mpg
 
 # Defining the response and covariates for testing
-x_test <- as.matrix(test_data[, c("hp", "wt")])
+x_test <- test_data %>% 
+  select("hp", "wt") %>% 
+  scale() %>% 
+  as.matrix()
 y_test <- test_data$mpg
 
 # Building the neural network model
 model <- keras_model_sequential() %>%
-  layer_dense(units = 64, activation = 'relu', input_shape = dim(x_train)[2]) %>%
+  layer_dense(units = 64, activation = 'relu', input_shape = ncol(x_train)) %>%
   layer_dense(units = 64, activation = 'relu') %>%
   layer_dense(units = 1)
 
 # Compiling the model
 model %>% compile(
-  #optimizer = 'rmsprop',
-  optimizer = keras$optimizers$legacy$RMSprop(learning_rate = 0.001),
+  optimizer = 'adam',
   loss = 'mse',
   metrics = c('mae')
 )

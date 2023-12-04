@@ -95,7 +95,7 @@ In supervised learning (the majority of the focus of this course) we minimise a 
 ```{r, echo = FALSE}
 library(keras) # Just for the data set
 mnist <- dataset_mnist()
-par(mfrow = c(2, 2), mar = c(0, 0, 2, 0))
+par(mfrow = c(2, 2), mar = c(0, 0, 2, 0), pty = "s")
 for (i in 1:4) {
   image(t(mnist$train$x[i,28:1,]), axes = FALSE, 
       main = paste("Label:", mnist$train$y[i]))
@@ -114,7 +114,6 @@ Supervised learning divided up into:
 
 - Regression: Target variable is continuous.
 - Classification: Target variable is discrete
-- Clustering: No target variable, just group similar data points together.
 
 ## Focussing on neural networks
 
@@ -125,7 +124,7 @@ We will cover:
 - Deep Learning: Neural networks with many layers.
 - Convolutional Neural Networks (CNNs): Specialised for image data.
 - Recurrent Neural Networks (RNNs): Specialised for time series
-- Tranformer models: specialised for text analysis (but also for time series in general)
+- Transformer models: specialised for text analysis (but also for time series in general)
 
 ## Some special NN terminology
 
@@ -226,28 +225,13 @@ plot(history) + ggtitle(paste("Test Mean Absolute Error:", round(results[2], 3))
 
 ```{r}
 data(iris)
-```
-... some normalisation... then...
-```{r, include = FALSE}
-# Convert species to one-hot encoded format
-
-# Normalize features
-normalize <- function(x) {
-  return((x - mean(x)) / sd(x))
-}
-
-iris$Sepal.Length <- normalize(iris$Sepal.Length)
-iris$Sepal.Width <- normalize(iris$Sepal.Width)
-iris$Petal.Length <- normalize(iris$Petal.Length)
-iris$Petal.Width <- normalize(iris$Petal.Width)
-```
-```{r}
-iris$Species <- as.factor(iris$Species)
 encoded_species <- to_categorical(as.numeric(iris$Species) - 1)
 str(iris)
 ```
 
 ## Set up training and test data
+
+\small
 
 ```{r}
 # Split data into training and test sets
@@ -258,12 +242,14 @@ test_data <- iris[-train_indices, ]
 
 x_train <- train_data %>% 
   select(Sepal.Length, Sepal.Width, 
-         Petal.Length, Petal.Width) %>% as.matrix()
+         Petal.Length, Petal.Width) %>%
+  scale() %>% as.matrix()
 y_train <- encoded_species[train_indices, ]
 
 x_test <- test_data %>% 
   select(Sepal.Length, Sepal.Width, 
-         Petal.Length, Petal.Width) %>% as.matrix()
+         Petal.Length, Petal.Width) %>% 
+  scale %>% as.matrix()
 y_test <- encoded_species[-train_indices, ]
 ```
 
@@ -272,7 +258,7 @@ y_test <- encoded_species[-train_indices, ]
 ```{r}
 model <- keras_model_sequential() %>%
   layer_dense(units = 32, activation = 'relu', 
-              input_shape = c(4)) %>%
+              input_shape = 4) %>%
   layer_dense(units = 3, activation = 'softmax')
 
 model %>% compile(
@@ -316,7 +302,7 @@ There are some advanced methods that are very new or not well implemented in R:
 - Building your own transformer
 - Bayesian optimisation, 
 - Running models in GPUs
-- Generalised adversarial networks
+- Generative adversarial networks
 - ...
 
 You can do all of these things in R, but they can get quite fiddly

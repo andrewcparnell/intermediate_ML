@@ -18,6 +18,7 @@ editor_options:
 knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 library(tidyverse)
+library(keras)
 ```
 
 ## Learning outcomes
@@ -32,11 +33,10 @@ library(tidyverse)
 library(keras)
 model <- keras_model_sequential() %>%
   layer_dense(units = 5, activation = 'relu', 
-              input_shape = c(4)) %>%
+              input_shape = 4) %>%
   layer_dense(units = 3, activation = 'softmax')
 model %>% compile(
-  optimizer = keras$optimizers$legacy$RMSprop(
-    learning_rate = 0.001),
+  optimizer = optimizer_adam(),
   loss = "categorical_crossentropy",
   metrics = c("mean_absolute_error")
 )
@@ -85,12 +85,8 @@ test_data <- as.matrix(iris[-indices, -5])
 train_labels <- iris[indices, 5]
 test_labels <- iris[-indices, 5]
 
-# Convert species to one-hot encoded vectors
-to_one_hot <- function(labels) {
-  model.matrix(~ labels - 1)  # The `-1` removes the intercept
-}
-train_labels_onehot <- to_one_hot(train_labels)
-test_labels_onehot <- to_one_hot(test_labels)
+train_labels_onehot <- to_categorical(as.numeric(train_labels) - 1)
+test_labels_onehot <- to_categorical(as.numeric(test_labels) - 1)
 ```
 
 ```{r}
@@ -182,7 +178,7 @@ These all come from differentiating the loss function with respect to each of th
 
 ## 6 Weight updates
 
-\small
+\tiny
 
 Now update the weights according to the learning rate
 
@@ -214,7 +210,7 @@ There are lots more but these tend to be the main ones we need to set
 
 - Many of the hidden layers we will use involve _activation functions_ which are applied to the output of that neuron
 - There are lots of different types, but in general to try and stabilise the values to a range, be differentiable (for the back-propagation step) and be simple to compute 
-- The activiation function for the final layer in the network needs to match the format of the output (e.g. softmax for probabilistic classification)
+- The activation function for the final layer in the network needs to match the format of the output (e.g. softmax for probabilistic classification)
 - You can find a list of activation functions at https://en.wikipedia.org/wiki/Activation_function
 
 ## From simple NN to Deep NN
