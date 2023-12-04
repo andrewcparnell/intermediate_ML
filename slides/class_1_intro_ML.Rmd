@@ -68,7 +68,7 @@ The main goal is not to teach the computer the rules of what to do but to give i
 
 \centering\includegraphics[width=0.5\textwidth]{ML_types.jpeg}
 
-\let\thefootnote\relax\footnotetext{\tiny From https://friendsofyates.org/kcyo.php?cname=explanation+of+machine+learning&cid=7}
+\let\thefootnote\relax\footnotetext{\tiny From https://friendsofyates.org/kcyo.php?cname=explanation+of+machine+learning\&cid=7}
 
 ## Common nomenclature in ML
 
@@ -89,6 +89,19 @@ The main goal is not to teach the computer the rules of what to do but to give i
 - __Reinforcement Learning__: Learn by interacting with an environment and receiving feedback.
 
 In supervised learning (the majority of the focus of this course) we minimise a loss function $L(y, x)$ to estimate $\hat{f}$ using target variable $y$ and features $x$. The structure of $f$ can be more or less anything we like
+
+## A popular example
+
+```{r, echo = FALSE}
+library(keras) # Just for the data set
+mnist <- dataset_mnist()
+par(mfrow = c(2, 2), mar = c(0, 0, 2, 0))
+for (i in 1:4) {
+  image(t(mnist$train$x[i,28:1,]), axes = FALSE, 
+      main = paste("Label:", mnist$train$y[i]))
+}
+par(mfrow=c(1, 1))
+```
 
 ## Common ML techniques
 
@@ -193,19 +206,19 @@ model %>% compile(
 ```{r, results='hide'}
 history <- model %>% fit(
   x_train, y_train,
-  epochs = 50,
-  batch_size = 16,
-  validation_data = list(x_test, y_test)
+  epochs = 50, # Number of passes through the training data
+  batch_size = 16, # Number of samples to train on 
+  validation_data = list(x_test, y_test) # Just for plotting
 )
 ```
 
+e.g. if you have a training dataset of 1000 samples and you set the batch size to 100, the model will take 10 iterations to complete one epoch
+
 ## Evaluate performance
 
-```{r}
-plot(history)
+```{r, echo = FALSE, results='hide'}
 results <- model %>% evaluate(x_test, y_test)
-cat("Test Loss:", results[1], "\n")
-cat("Test Mean Absolute Error:", results[2], "\n")
+plot(history) + ggtitle(paste("Test Mean Absolute Error:", round(results[2], 3)))
 ```
 
 
@@ -294,6 +307,19 @@ confusion_matrix <- table(Predicted = predictions_final,
 ```{r}
 print(confusion_matrix)
 ```
+
+## Some topics we don't cover
+
+There are some advanced methods that are very new or not well implemented in R:
+
+- Transfer learning, 
+- Building your own transformer
+- Bayesian optimisation, 
+- Running models in GPUs
+- Generalised adversarial networks
+- ...
+
+You can do all of these things in R, but they can get quite fiddly
 
 ## Summary
 
