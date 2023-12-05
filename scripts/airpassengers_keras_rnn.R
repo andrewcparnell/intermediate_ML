@@ -33,7 +33,7 @@ model <- keras_model_sequential() %>%
 
 model %>% compile(
   loss = 'mean_squared_error',
-  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.001),
+  optimizer = optimizer_adam(learning_rate = 0.01) # keras$optimizers$legacy$Adam(learning_rate = 0.001),
   # optimizer = optimizer_adam(learning_rate = 0.01)
 )
 
@@ -41,7 +41,7 @@ model %>% compile(
 history <- model %>% fit(
   X_train, y_train,
   epochs = 100,
-  batch_size = 1,
+  batch_size = 16,
   validation_data = list(X_test, y_test)
 )
 

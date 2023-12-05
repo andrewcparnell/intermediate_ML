@@ -70,7 +70,7 @@ It's fundamentally the same as a standard neural network, but the hidden units h
 ## Parameter set up in RNNs
 
 - We have some common values we need to set just like in standard neural networks. This includes the number of hidden units, an activation function, batch size, learning rate, etc
-- In particular we have to feed in a specific length of the time series into the model (the `look_back`) parameter in the above
+- In particular we have to feed in a specific length of the training set into the model (the `look_back`) parameter in the above
 - Dropout and regularisation gets very important. If you can ignore old values (or make them very small) the model can avoid over fitting
 - It can also be important to initialise the recurrent weights (i.e. those that are specific to the recurrent loops) to avoid ...
 
@@ -102,11 +102,6 @@ Two key gates:
 - Update Gate: The update gate in a GRU determines how much of the previous hidden state should be retained and how much of the new candidate hidden state should be accepted. By performing this weighted combination, it facilitates the model in capturing dependencies over various time scales, allowing it to decide whether to keep the existing memory or update it with new information.
 - Reset Gate: The reset gate assists in controlling how much of the previous hidden state will influence the candidate hidden state for the current time step. By allowing the model to forget certain portions of the previous hidden state selectively, it provides the flexibility to make the current hidden state less dependent on the historical context when necessary, effectively enabling the model to capture both short-term and long-term dependencies.
 
-## RNNs vs LSTMs vs GRUs
-
-\centering\includegraphics[width=\textwidth]{rnn_lstm_gru_pic.png}
-
-\let\thefootnote\relax\footnotetext{\tiny From http://dprogrammer.org/rnn-lstm-gru}
 
 
 ## LSTM formula
@@ -122,6 +117,13 @@ Two key gates:
 - Forget Gate: assesses which information from the memory cell is no longer necessary and should be discarded, allowing the LSTM to forget irrelevant parts of the sequence, which is essential in maintaining the memory cell's relevance and efficiency as it processes new inputs.
 - Input Gate: decides which information is retained from the current input and previous hidden state, and adds this selected information to the cell
 - Output Gate: determines which part of the current state will be used to compute the hidden state of the current time step
+
+## RNNs vs LSTMs vs GRUs
+
+\centering\includegraphics[width=\textwidth]{rnn_lstm_gru_pic.png}
+
+\let\thefootnote\relax\footnotetext{\tiny From http://dprogrammer.org/rnn-lstm-gru}
+
 
 ## Fitting RNNs, LSTMs and GRUs
 

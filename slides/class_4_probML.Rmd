@@ -98,11 +98,11 @@ For a fixed number of trees the model estimates all the tree structures and all 
 ```{r, eval = FALSE}
 bart_model <- wbart(x.train, y.train, x.test)
 
-posterior_predictions <- t(bart_model$yhat.test)
+posterior_predictions <- bart_model$yhat.test
 
 # Take what you want from the posterior distribution
-posterior_mean <- rowMeans(posterior_predictions)
-posterior_sd <- apply(posterior_predictions, 1, sd)
+posterior_mean <- colMeans(posterior_predictions)
+posterior_sd <- apply(posterior_predictions, 2, sd)
 posterior_low <- posterior_mean - 1.96 * posterior_sd
 posterior_high <- posterior_mean + 1.96 * posterior_sd
 ```
@@ -135,9 +135,9 @@ x.test <- as.matrix(test_data[, c("hp", "wt")])
 bart_model <- wbart(x.train, y.train, x.test, nskip=100, ndpost=1000)
 
 # Plotting the posterior uncertainty in the test set predictions
-posterior_predictions <- t(bart_model$yhat.test)
-posterior_mean <- rowMeans(posterior_predictions)
-posterior_sd <- apply(posterior_predictions, 1, sd)
+posterior_predictions <- bart_model$yhat.test
+posterior_mean <- colMeans(posterior_predictions)
+posterior_sd <- apply(posterior_predictions, 2, sd)
 
 # Create 95% confidence intervals
 posterior_low <- posterior_mean - 1.96 * posterior_sd

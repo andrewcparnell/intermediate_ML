@@ -11,7 +11,7 @@ min_val <- min(data)
 data_normalized <- (data - min_val) / (max_val - min_val)
 
 # Create sequences of length 'look_back' to predict the next value
-look_back <- 3
+look_back <- 20
 dataX <- NULL
 dataY <- NULL
 for (i in 1:(length(data_normalized) - look_back)) {
@@ -34,15 +34,15 @@ model <- keras_model_sequential() %>%
 
 model %>% compile(
   loss = 'mean_squared_error',
-  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01)
-  # optimizer = optimizer_adam(lr = 0.01)
+  # optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01)
+  optimizer = optimizer_adam(learning_rate = 0.01)
 )
 
 # Train the model
 history <- model %>% fit(
   X_train, y_train,
   epochs = 100,
-  batch_size = 1,
+  batch_size = 16,
   validation_data = list(X_test, y_test)
 )
 
@@ -57,3 +57,4 @@ abline(a = 0, b = 1)
 
 plot(y_train)
 lines(model %>% predict(X_train), col = 'red')
+

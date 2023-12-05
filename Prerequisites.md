@@ -21,27 +21,9 @@ Install the following using the corresponding links
 
 ### Step 2
 
-First you need to install Python. If you're on a Mac I would recommend first installing `homebrew`. See instructions at https://brew.sh. Once installed, go to a Terminal window and type
+Install Python, tensorflow, and keras by following the instructions at: https://tensorflow.rstudio.com/install/
 
-```
-brew install python
-```
-
-If you're on Windows install the most recent version at:https://www.python.org/downloads/windows/.
-
-## Step 3
-
-The main package we will be using is `keras`. You can install it with
-
-```{r,eval=FALSE}
-install.packages('keras')
-library(keras)
-library(tensorflow)
-install_keras()
-install_tensorflow()
-```
-
-There is a nice introduction for installing `keras` and checking it works at (https://cran.r-project.org/web/packages/keras/vignettes/). In particular copying the code and running the basic model there will help diagnose any problems with your installation
+### Step 3
 
 Now install the other packages we need:
 
