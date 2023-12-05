@@ -23,6 +23,15 @@ Install the following using the corresponding links
 
 Install Python, tensorflow, and keras by following the instructions at: https://tensorflow.rstudio.com/install/
 
+At the end you should be able to run
+
+```
+library(tensorflow)
+library(keras)
+```
+
+without error.
+
 ### Step 3
 
 Now install the other packages we need:
