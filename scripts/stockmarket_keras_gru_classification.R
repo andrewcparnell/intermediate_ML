@@ -39,8 +39,7 @@ model <- keras_model_sequential() %>%
 
 # Compile model
 model %>% compile(
-  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.001),
-  # optimizer = optimizer_adam(lr = 0.001),
+  optimizer = 'adam',
   loss = 'binary_crossentropy',
   metrics = c('accuracy')
 )
