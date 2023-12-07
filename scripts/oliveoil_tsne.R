@@ -35,5 +35,7 @@ best_model <- results[[which.max(sapply(results, function(res) res$score))]]
 plot(best_model$tsne_model$Y, 
      col = oliveoil$macro.area,
      pch = 20, main = "t-SNE Reduction of Olive Oil Data")
-
+plot(best_model$tsne_model$Y, 
+     col = oliveoil$region,
+     pch = 20, main = "t-SNE Reduction of Olive Oil Data")
 

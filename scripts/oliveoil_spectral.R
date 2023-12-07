@@ -34,8 +34,8 @@ objectives <- sapply(k_values, tune_spectral)
 # Plot the tuning result
 plot(k_values, objectives, type = "b", main="Tuning Spectral Clustering: Objective vs. Number of Clusters", xlab="Number of Clusters", ylab="Objective")
 
-# Perform clustering with the optimal number of clusters (e.g., 4)
-final_clustering <- specc(olive1, centers = 4)
+# Perform clustering with the optimal number of clusters (e.g., 2)
+final_clustering <- specc(olive1, centers = 2)
 final_clusters <- final_clustering@.Data
 
 # Visualize the final clustering result

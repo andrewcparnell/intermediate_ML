@@ -9,9 +9,9 @@ x_train <- mnist$train$x
 x_test <- mnist$test$x
 
 # Plot an image 
-img <- matrix(x_test[1,], nrow = 28)
-image(img[,ncol(img):1], axes = FALSE, 
-      main = paste("Label:", mnist$test$y[i]))
+img <- x_train[1,28:1,]
+image(t(img), axes = FALSE, 
+      main = paste("Label:", mnist$train$y[1]))
 
 # Preprocess Data
 x_train <- array_reshape(x_train / 255, c(nrow(x_train), 784))
@@ -33,14 +33,14 @@ autoencoder <- keras_model(inputs = input_img, outputs = decoded)
 
 # Compile and Fit the Model
 autoencoder %>% compile(
-  optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01),
-  #optimizer = 'adam',
+  #optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01),
+  optimizer = 'adam',
   loss = 'binary_crossentropy'
 )
 
 autoencoder %>% fit(
   x_train, x_train,
-  epochs = 50,
+  epochs = 20,
   batch_size = 256,
   validation_data = list(x_test, x_test)
 )
@@ -64,12 +64,15 @@ ggplot(encoded_df, aes(x = V1, y = V2, color = as.factor(digit))) +
 
 # Plot a reconstructed image
 # Now plot
-img <- matrix(x_test[1,], nrow = 28)
-image(img[,ncol(img):1], axes = FALSE, 
-      main = paste("Label:", mnist$test$y[i]))
+choose <- 10
+par(mfrow = c(1, 2))
+img <-  mnist$test$x[choose,28:1,]
+image(t(img), axes = FALSE, 
+      main = paste("Original image. Label:", mnist$test$y[choose]))
 
 decoded_images <- predict(autoencoder, x_test)
-img <- matrix(decoded_images[1,], nrow = 28)
+img <- matrix(decoded_images[choose,], nrow = 28)
 image(img[,ncol(img):1], axes = FALSE, 
-      main = paste("Label:", mnist$test$y[i]))
+      main = paste("Reconstructed image. Label:", mnist$test$y[choose]))
+par(mfrow = c(1, 1))
 # Not too bad!

@@ -36,8 +36,8 @@ sampling <- function(arg){
   
   epsilon <- k_random_normal(
     shape = c(k_shape(z_mean)[[1]]), 
-    mean=0.,
-    stddev=epsilon_std
+    mean = 0.,
+    stddev = epsilon_std
   )
   
   z_mean + k_exp(z_log_var/2)*epsilon

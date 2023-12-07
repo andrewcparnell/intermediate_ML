@@ -42,8 +42,8 @@ results <- apply(models, 1, function(params) {
 })
 
 # Plot some of the models
-plot(results[[1]]$umap$layout, col = oliveoil$macro.area)
-plot(results[[9]]$umap$layout, col = oliveoil$macro.area)
+plot(results[[1]]$umap$layout, col = oliveoil$region)
+plot(results[[9]]$umap$layout, col = oliveoil$region)
 
 # Model selection: Find the best UMAP model based on the chosen metric (e.g., silhouette score)
 best_model <- results[[which.max(sapply(results, function(res) res$score))]]

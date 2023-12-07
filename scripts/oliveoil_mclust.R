@@ -36,5 +36,8 @@ summary(best_model)
 plot(best_model, what = 'classification')
 
 # Compare BIC
-all_mods <- Mclust(olive1, G = 1:20, modelNames = "EVI")
+all_mods <- Mclust(olive1, G = 1:10)
 plot(all_mods, what = 'BIC')
+
+# Extract out the probabilities of each observation being in each cluster
+head(best_model$z)
