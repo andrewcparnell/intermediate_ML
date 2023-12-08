@@ -1,4 +1,4 @@
-# Load the required libraries
+# Load the required libraries - set this running before talking about it
 library(keras)
 
 # Load the CIFAR-10 dataset
@@ -62,7 +62,7 @@ plot(history)
 predictions <- model %>% predict(x_test) 
 predictions_final <- predictions %>% k_argmax() %>% as.vector()
 
-confusion_matrix <- table(Predicted=predictions_final, Actual=y_test)
+confusion_matrix <- table(Predicted = predictions_final, Actual = y_test)
 print(confusion_matrix)
 
 # Would be interesting at this point to look at which ones it got wrong

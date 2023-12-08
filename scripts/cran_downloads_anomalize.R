@@ -8,7 +8,7 @@ set.seed(123)
 
 # Fetching the tidyverse downloads data - could change to another package
 start_date <- as.Date("2022-01-01")
-end_date <- today()
+end_date <- today() - 2
 pkg_downloads <- cran_downloads(packages = "tidyverse", from = start_date, to = end_date)
 
 # Convert to tibble and arrange by date for consistency

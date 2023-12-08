@@ -8,7 +8,7 @@ library(forecast)        # For time series forecasting
 # Get some data
 start_date <- as.Date("2023-10-01")
 end_date <- today() - 2
-pkg_downloads <- cran_downloads(packages = "tidyverse", from = start_date, to = end_date)
+pkg_downloads <- cran_downloads(packages = "Rcpp", from = start_date, to = end_date)
 
 # Convert to tibble and arrange by date for consistency
 pkg_data <- as_tibble(pkg_downloads) %>%

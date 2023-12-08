@@ -9,7 +9,7 @@ packages <- c("ggplot2", "dplyr", "tidyr", "readr", "purrr", "tibble")
 
 # Function to get CRAN download data for a set of packages
 start_date <- as.Date("2022-01-01")
-end_date <- today()
+end_date <- today() - 2
 pkg_downloads <- cranlogs::cran_downloads(packages = packages, from = start_date, to = end_date)
 
 # Prepare the data in a wide format suitable for high-dimensional analysis

@@ -52,7 +52,7 @@ model <-
 model %>%
   compile(
     loss = 'mean_squared_error',
-    optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01)
+    optimizer = 'adam', #keras$optimizers$legacy$Adam(learning_rate = 0.01)
   )
 
 # Train the model

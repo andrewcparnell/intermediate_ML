@@ -48,8 +48,8 @@ model <-
 model %>%
   compile(
     loss = 'mean_squared_error',
-    optimizer = keras$optimizers$legacy$Adam(learning_rate = 0.01),
-    metrics = "mean_squared_error"
+    optimizer = 'adam', #keras$optimizers$legacy$Adam(learning_rate = 0.01),
+    # metrics = "mean_squared_error"
   )
 
 # Train the model
