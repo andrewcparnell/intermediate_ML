@@ -6,10 +6,10 @@ library(tidyverse)
 library(keras)
 
 # Make up some data - note that this will not fit well due to it being totally random
-N_samples <- 500
-N_input_features <- 5
-N_output_features <- 20
-image_dim <- 32
+N_samples <- 500 # Total number of e.g. days
+N_input_features <- 5 # E.g. number of weather variables
+N_output_features <- 20 # number of output pixels
+image_dim <- 32 # Dimension of static image
 
 # Create the static image
 static_image <- matrix(runif(image_dim^2), 
