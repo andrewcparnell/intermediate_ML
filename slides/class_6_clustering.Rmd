@@ -117,12 +117,6 @@ new_data <- olive1[1:50,] + matrix(rnorm(50*8, 0, 0.1),
 new_data_umap <- predict(umap_result, new_data)
 points(new_data_umap, col = 'blue', pch = 19)
 ```
-```{r, eval = FALSE}
-new_data <- olive1[1:50,] + matrix(rnorm(50*8, 0, 0.1), 
-                                   ncol = 8)
-new_data_umap <- predict(umap_result, new_data)
-points(new_data_umap, col = 'blue', pch = 19)
-```
 
 
 ## Technique number 2: $t$-SNE
@@ -146,7 +140,7 @@ points(new_data_umap, col = 'blue', pch = 19)
 
 2. It next defines a similar probability distribution in the low-dimensional space using a Student's t-distribution: \( q_{ij} = \frac{(1 + ||y_i - y_j||^2)^{-1}}{\sum_{k \neq l} (1 + ||y_k - y_l||^2)^{-1}} \). The algorithm minimizes the Kullback-Leibler divergence between the high-dimensional and low-dimensional distributions, \( D_{KL}(P||Q) = \sum_i \sum_j p_{ij} \log \frac{p_{ij}}{q_{ij}} \), using gradient descent.
 
-3. The final result is a 2D (or higher) map that preserves the structure of the data. Points close in the high-dimensional space remain close in the low-dimensional space, providing an intuitive visualization that reflects original relationships and clusters.
+3. The final result is a 2D (or higher) map that preserves the structure of the data. Points close in the high-dimensional space remain close in the low-dimensional space, providing an intuitive visualisation that reflects original relationships and clusters.
 
 ## Using t-SNE in R
 
@@ -179,7 +173,8 @@ olive1 <- olive1/margin
 tnse_model <- Rtsne(olive1)
 
 plot(tnse_model$Y, 
-     col = oliveoil$macro.area,
+     col = oliveoil$macro.area, xlab = "t-SNE reduced dimension 1", 
+     ylab = "t-SNE reduced dimension 2",
      pch = 20, main = "t-SNE Reduction of Olive Oil Data")
 ```
 
@@ -310,7 +305,7 @@ plot(olive1$palmitic, olive1$oleic,
 ```{r}
 data(spirals)
 sc <- specc(spirals, centers=2)
-plot(spirals, col=sc)
+plot(spirals, col=sc, xlab = 'Dim 1', ylab = 'Dim 2')
 ```
 
 ## Final notes on clustering and dimension reduction

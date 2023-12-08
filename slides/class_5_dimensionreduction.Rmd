@@ -16,7 +16,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf', fig.height = 5)
-par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+par(mar = c(3, 3, 2, 1), mgp = c(2,.7,0), tck = -0.01, las = 1)
 library(tidyverse)
 ```
 
@@ -63,7 +63,7 @@ x_train <- array_reshape(x_train / 255, c(nrow(x_train), 784))
 x_test <- array_reshape(x_test / 255, c(nrow(x_test), 784))
 
 # Plot the First Few Training Images
-par(mfrow = c(2, 2))
+par(mfrow = c(2, 2), mar = c(0, 0, 2, 0), pty = "s")
 for (i in 1:4) {
   img <- matrix(x_train[i,], nrow = 28)
   image(img[,ncol(img):1], axes = FALSE, main = paste("Label:", mnist$train$y[i]))
@@ -237,7 +237,7 @@ encoded_df <- as.data.frame(encoded_imgs[,o[1:2]])
 encoded_df$digit <- mnist$test$y
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, messages = FALSE}
 ggplot(encoded_df, aes(x = V1, y = V2, color = as.factor(digit))) +
   geom_point() +
   scale_color_discrete(name = "Digit") +
@@ -245,6 +245,23 @@ ggplot(encoded_df, aes(x = V1, y = V2, color = as.factor(digit))) +
        x = paste("Dimension",o[1]),
        y = paste("Dimension",o[2]))
 ```
+
+## A reconstructed image
+
+```{r, echo = FALSE, message=FALSE}
+choose <- 1
+par(mfrow = c(1, 2), pty = "s")
+img <-  mnist$test$x[choose,28:1,]
+image(t(img), axes = FALSE, 
+      main = paste("Original image. Label:", mnist$test$y[choose]))
+
+decoded_images <- predict(autoencoder, x_test)
+img <- matrix(decoded_images[choose,], nrow = 28)
+image(img[,ncol(img):1], axes = FALSE, 
+      main = paste("Reconstructed image. Label:", mnist$test$y[choose]))
+par(mfrow = c(1, 1))
+```
+
 
 ## What do use an encoder for?
 
